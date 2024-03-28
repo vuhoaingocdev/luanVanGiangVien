@@ -400,82 +400,91 @@ const ChiTietHoSo = props => {
                   {getTrangThai1}
                 </Text>
 
-                <View style={styles.danhSachThuTucTieuDe}>
-                  <View style={styles.viewSTT}>
-                    <Text style={styles.textWhite1}>STT</Text>
-                  </View>
-
-                  <View style={styles.viewNguoiXyLy}>
-                    <Text style={styles.textWhite1}>Người xử lý</Text>
-                  </View>
-
-                  <View style={styles.viewNgayHenTra}>
-                    <Text style={styles.textWhite1}>Ngày hẹn trả</Text>
-                  </View>
-
-                  <View style={styles.viewNoiTraKetQua}>
-                    <Text style={styles.textWhite1}>Nơi trả kết quả</Text>
-                  </View>
-                  <View style={styles.viewNgayXuLi}>
-                    <Text style={styles.textWhite1}>Ngày xử lý</Text>
-                  </View>
-                </View>
-
-                {chiTietTiepNhanHoSo.length !== 0 ? (
-                  chiTietTiepNhanHoSo.map((item, index) => (
-                    <View style={styles.chiTietDanhSachHoSo1} key={index}>
-                      <View style={styles.viewChiTietSTT}>
-                        <Text style={styles.text1}>{index + 1}</Text>
+                <ScrollView horizontal>
+                  <ScrollView>
+                    <View style={styles.danhSachThuTucTieuDe1}>
+                      <View style={styles.viewSTT}>
+                        <Text style={styles.textWhite1}>STT</Text>
                       </View>
 
-                      <View style={styles.viewChiTietNguoiXyLy}>
-                        <Text style={styles.text1}>{item.nguoiXuLy} </Text>
+                      <View style={styles.viewNguoiXyLy}>
+                        <Text style={styles.textWhite1}>Người xử lý</Text>
                       </View>
 
-                      <View style={styles.viewChiTietNgayHenTra}>
-                        <Text style={styles.text1}>
-                          {item.ngayHenTra
-                            ? moment(item.ngayHenTra).format(
-                                'DD/MM/YYYY HH:mm:ss',
-                              )
-                            : ''}
-                        </Text>
+                      <View style={styles.viewNgayHenTra}>
+                        <Text style={styles.textWhite1}>Ngày hẹn trả</Text>
                       </View>
 
-                      <View style={styles.viewChiTietNoiTraKetQua}>
-                        <Text style={styles.text1}>{item.noiTraKetQua} </Text>
+                      <View style={styles.viewNoiTraKetQua}>
+                        <Text style={styles.textWhite1}>Nơi trả kết quả</Text>
                       </View>
-
-                      <View style={styles.viewChiTietNgayXuLy}>
-                        <Text style={styles.text1}>
-                          {item.ngayXuLy1
-                            ? moment(item.ngayXuLy1).format(
-                                'DD/MM/YYYY HH:mm:ss',
-                              )
-                            : ''}
-                        </Text>
+                      <View style={styles.viewNgayXuLi}>
+                        <Text style={styles.textWhite1}>Ngày xử lý</Text>
                       </View>
                     </View>
-                  ))
-                ) : hasData ? (
-                  <View style={styles.viewNoData}>
-                    <Text style={styles.textNoData}>Không có dữ liệu!</Text>
-                  </View>
-                ) : (
-                  <View style={styles.viewModel}>
-                    <View style={styles.loaderContainer}>
-                      <ActivityIndicator
-                        color="gray"
-                        size="small"
-                        style={{borderRadius: 10, overflow: 'hidden'}}
-                      />
-                      <Text
-                        style={{color: 'gray', fontSize: 20, marginLeft: 15}}>
-                        Vui lòng đợi...
-                      </Text>
-                    </View>
-                  </View>
-                )}
+                    {chiTietTiepNhanHoSo.length !== 0 ? (
+                      chiTietTiepNhanHoSo.map((item, index) => (
+                        <View style={styles.chiTietDanhSachHoSo1} key={index}>
+                          <View style={styles.viewChiTietSTT}>
+                            <Text style={styles.text1}>{index + 1}</Text>
+                          </View>
+
+                          <View style={styles.viewChiTietNguoiXyLy}>
+                            <Text style={styles.text1}>{item.nguoiXuLy} </Text>
+                          </View>
+
+                          <View style={styles.viewChiTietNgayHenTra}>
+                            <Text style={styles.text1}>
+                              {item.ngayHenTra
+                                ? moment(item.ngayHenTra).format(
+                                    'DD/MM/YYYY HH:mm:ss',
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
+
+                          <View style={styles.viewChiTietNoiTraKetQua}>
+                            <Text style={styles.text1}>
+                              {item.noiTraKetQua}{' '}
+                            </Text>
+                          </View>
+
+                          <View style={styles.viewChiTietNgayXuLy}>
+                            <Text style={styles.text1}>
+                              {item.ngayXuLy1
+                                ? moment(item.ngayXuLy1).format(
+                                    'DD/MM/YYYY HH:mm:ss',
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
+                        </View>
+                      ))
+                    ) : hasData ? (
+                      <View style={styles.viewNoData}>
+                        <Text style={styles.textNoData}>Không có dữ liệu!</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.viewModel}>
+                        <View style={styles.loaderContainer}>
+                          <ActivityIndicator
+                            color="gray"
+                            size="small"
+                            style={{borderRadius: 10, overflow: 'hidden'}}
+                          />
+                          <Text
+                            style={{
+                              color: 'gray',
+                              fontSize: 20,
+                              marginLeft: 15,
+                            }}>
+                            Vui lòng đợi...
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+                  </ScrollView>
+                </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={Close}>
                   <Text style={styles.textStyle}>Đóng</Text>
                 </TouchableOpacity>
@@ -534,7 +543,7 @@ const styles = StyleSheet.create({
 
   textWhite: {
     color: '#ffffff',
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: 'bold',
   },
 
@@ -550,6 +559,13 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 8,
     justifyContent: 'center',
+  },
+
+  danhSachThuTucTieuDe1: {
+    flexDirection: 'row',
+    height: 40,
+    marginBottom: 7,
+    marginTop: 8,
   },
 
   viewBuoc: {
@@ -677,18 +693,17 @@ const styles = StyleSheet.create({
   },
 
   viewSTT: {
-    width: 30,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
     borderTopLeftRadius: 13,
-    marginLeft: 20,
     borderRightWidth: 1,
     borderColor: '#ffff',
   },
 
   viewNguoiXyLy: {
-    width: 110,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -697,7 +712,7 @@ const styles = StyleSheet.create({
   },
 
   viewNgayHenTra: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -706,7 +721,7 @@ const styles = StyleSheet.create({
   },
 
   viewNoiTraKetQua: {
-    width: 90,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -715,7 +730,7 @@ const styles = StyleSheet.create({
   },
 
   viewNgayXuLi: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -723,7 +738,6 @@ const styles = StyleSheet.create({
   },
 
   chiTietDanhSachHoSo1: {
-    width: 0.9 * getWidth,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 65,
@@ -738,7 +752,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietSTT: {
-    width: 30,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -747,7 +761,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNguoiXyLy: {
-    width: 110,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -756,7 +770,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNgayHenTra: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -765,7 +779,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNoiTraKetQua: {
-    width: 90,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -774,7 +788,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNgayXuLy: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f8f8ff',

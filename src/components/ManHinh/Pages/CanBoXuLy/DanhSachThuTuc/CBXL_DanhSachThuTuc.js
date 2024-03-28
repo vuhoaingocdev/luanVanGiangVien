@@ -712,142 +712,148 @@ const CBXL_DanhSachThuTuc = props => {
           </View>
 
           {clickTrangChu ? (
-            <ScrollView style={{height: 350}}>
-              {/* Danh sách thủ tục */}
-              <View style={styles.danhSachThuTucTieuDe}>
-                <View style={styles.viewSTT}>
-                  <Text style={styles.text}>STT</Text>
-                </View>
-
-                <View style={styles.viewTenThuTuc}>
-                  <Text style={styles.text}>Tên thủ tục</Text>
-                </View>
-
-                <View style={styles.viewLinhVuc}>
-                  <Text style={styles.text}>Lĩnh vực</Text>
-                </View>
-              </View>
-
-              {/* Chi tiết danh sách tên thủ tục */}
-              <View style={styles.viewData}>
-                {duLieuHienTai.map((tt, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      props.navigation.navigate('ChiTietThuTuc', {
-                        IDthutuc: tt.IDthutuc,
-                      });
-                    }}>
-                    <View style={styles.chiTietDanhSachThuTuc} key={index}>
-                      <View style={styles.chiTietViewSTT}>
-                        <Text style={[styles.text, {color: 'black'}]}>
-                          {index + 1 + viTri}
-                        </Text>
-                      </View>
-
-                      <View style={styles.chiTietViewTenThuTuc}>
-                        <Text style={[styles.text2, {fontWeight: 'bold'}]}>
-                          {tt.tenThuTuc}
-                        </Text>
-
-                        <View style={styles.chiTietViewTenThuTucMucDo}>
-                          <Text style={[styles.text2, {marginTop: 2}]}>
-                            Mức độ:
-                          </Text>
-                          <View style={styles.viewMucDo}>
-                            <Text style={[styles.text1, {color: '#ffffff'}]}>
-                              {tt.mucDo}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View style={styles.chiTietViewLinhVuc}>
-                        <Text style={[styles.text1, {color: 'black'}]}>
-                          {tt.tenLinhVuc}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-          ) : (
-            <ScrollView style={{height: 300, overflow: 'hidden'}}>
-              {/* Danh sách các đề nghị */}
-              <View style={{alignItems: 'center'}}>
-                <View style={styles.danhSachThuTucTieuDe1}>
-                  <View style={styles.viewSTT1}>
-                    <Text style={styles.textTieuDe1}>STT</Text>
+            <ScrollView horizontal>
+              <ScrollView style={{height: 350}}>
+                {/* Danh sách thủ tục */}
+                <View style={styles.danhSachThuTucTieuDe}>
+                  <View style={styles.viewSTT}>
+                    <Text style={styles.text}>STT</Text>
                   </View>
-                  <View style={styles.viewTenHoSo}>
-                    <Text style={styles.textTieuDe1}>Tên hồ sơ</Text>
+
+                  <View style={styles.viewTenThuTuc}>
+                    <Text style={styles.text}>Tên thủ tục</Text>
                   </View>
-                  <View style={styles.viewDonViCaNhanGui}>
-                    <Text style={styles.textTieuDe1}>Đơn vị/ Cá nhân gửi</Text>
-                  </View>
-                  <View style={styles.viewDonViCaNhanTiepNhan}>
-                    <Text style={styles.textTieuDe1}>
-                      Đơn vị/ Cá nhân tiếp nhận
-                    </Text>
-                  </View>
-                  <View style={styles.viewTrangThaiHoSo}>
-                    <Text style={styles.textTieuDe1}>Trạng thái hồ sơ</Text>
+
+                  <View style={styles.viewLinhVuc}>
+                    <Text style={styles.text}>Lĩnh vực</Text>
                   </View>
                 </View>
-              </View>
 
-              <View style={{alignItems: 'center'}}>
+                {/* Chi tiết danh sách tên thủ tục */}
                 <View style={styles.viewData}>
-                  {dataCurent.map((item, index) => (
+                  {duLieuHienTai.map((tt, index) => (
                     <TouchableOpacity
                       key={index}
                       onPress={() => {
-                        openThongTinHoSo(item);
+                        props.navigation.navigate('ChiTietThuTuc', {
+                          IDthutuc: tt.IDthutuc,
+                        });
                       }}>
-                      <View style={styles.chiTietDanhSachHoSo} key={index}>
-                        <View style={styles.viewChiTietSTT}>
-                          <Text style={styles.textDuLieuHoSo}>
+                      <View style={styles.chiTietDanhSachThuTuc} key={index}>
+                        <View style={styles.chiTietViewSTT}>
+                          <Text style={[styles.text, {color: 'black'}]}>
                             {index + 1 + viTri}
                           </Text>
                         </View>
-                        <View style={styles.viewChiTietTenHoSo}>
-                          <Text style={styles.textDuLieuHoSo}>
-                            {item.TenHoSo}
+
+                        <View style={styles.chiTietViewTenThuTuc}>
+                          <Text style={[styles.text2, {fontWeight: 'bold'}]}>
+                            {tt.tenThuTuc}
                           </Text>
+
+                          <View style={styles.chiTietViewTenThuTucMucDo}>
+                            <Text style={[styles.text2, {marginTop: 2}]}>
+                              Mức độ:
+                            </Text>
+                            <View style={styles.viewMucDo}>
+                              <Text style={[styles.text1, {color: '#ffffff'}]}>
+                                {tt.mucDo}
+                              </Text>
+                            </View>
+                          </View>
                         </View>
-                        <View style={styles.viewChiTietDonViCaNhanGui}>
-                          <Text style={styles.textDuLieuHoSo}>
-                            {item.DonViCaNhanGui}
-                          </Text>
-                        </View>
-                        <View style={styles.viewChiTietDonViCaNhanTiepNhan}>
-                          <Text style={styles.textDuLieuHoSo}>
-                            {item.DonViCaNhanTiepNhan}
-                          </Text>
-                        </View>
-                        <View style={styles.viewChietTrangThaiHoSo}>
-                          <Text
-                            style={[
-                              styles.textDuLieuHoSo,
-                              {
-                                fontWeight: 'bold',
-                                color:
-                                  item.TrangThai === 'Chưa tiếp nhận'
-                                    ? '#235d7c'
-                                    : item.TrangThai === 'Tiếp nhận hồ sơ'
-                                    ? 'green'
-                                    : 'red',
-                              },
-                            ]}>
-                            {item.TrangThai}
+
+                        <View style={styles.chiTietViewLinhVuc}>
+                          <Text style={[styles.text1, {color: 'black'}]}>
+                            {tt.tenLinhVuc}
                           </Text>
                         </View>
                       </View>
                     </TouchableOpacity>
                   ))}
                 </View>
-              </View>
+              </ScrollView>
+            </ScrollView>
+          ) : (
+            <ScrollView horizontal>
+              <ScrollView style={{height: 300, overflow: 'hidden'}}>
+                {/* Danh sách các đề nghị */}
+                <View style={{alignItems: 'center'}}>
+                  <View style={styles.danhSachThuTucTieuDe1}>
+                    <View style={styles.viewSTT1}>
+                      <Text style={styles.textTieuDe1}>STT</Text>
+                    </View>
+                    <View style={styles.viewTenHoSo}>
+                      <Text style={styles.textTieuDe1}>Tên hồ sơ</Text>
+                    </View>
+                    <View style={styles.viewDonViCaNhanGui}>
+                      <Text style={styles.textTieuDe1}>
+                        Đơn vị/ Cá nhân gửi
+                      </Text>
+                    </View>
+                    <View style={styles.viewDonViCaNhanTiepNhan}>
+                      <Text style={styles.textTieuDe1}>
+                        Đơn vị/ Cá nhân tiếp nhận
+                      </Text>
+                    </View>
+                    <View style={styles.viewTrangThaiHoSo}>
+                      <Text style={styles.textTieuDe1}>Trạng thái hồ sơ</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={{alignItems: 'center'}}>
+                  <View style={styles.viewData}>
+                    {dataCurent.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          openThongTinHoSo(item);
+                        }}>
+                        <View style={styles.chiTietDanhSachHoSo} key={index}>
+                          <View style={styles.viewChiTietSTT}>
+                            <Text style={styles.textDuLieuHoSo}>
+                              {index + 1 + viTri}
+                            </Text>
+                          </View>
+                          <View style={styles.viewChiTietTenHoSo}>
+                            <Text style={styles.textDuLieuHoSo}>
+                              {item.TenHoSo}
+                            </Text>
+                          </View>
+                          <View style={styles.viewChiTietDonViCaNhanGui}>
+                            <Text style={styles.textDuLieuHoSo}>
+                              {item.DonViCaNhanGui}
+                            </Text>
+                          </View>
+                          <View style={styles.viewChiTietDonViCaNhanTiepNhan}>
+                            <Text style={styles.textDuLieuHoSo}>
+                              {item.DonViCaNhanTiepNhan}
+                            </Text>
+                          </View>
+                          <View style={styles.viewChietTrangThaiHoSo}>
+                            <Text
+                              style={[
+                                styles.textDuLieuHoSo,
+                                {
+                                  fontWeight: 'bold',
+                                  color:
+                                    item.TrangThai === 'Chưa tiếp nhận'
+                                      ? '#235d7c'
+                                      : item.TrangThai === 'Tiếp nhận hồ sơ'
+                                      ? 'green'
+                                      : 'red',
+                                },
+                              ]}>
+                              {item.TrangThai}
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </ScrollView>
             </ScrollView>
           )}
         </View>
@@ -882,7 +888,7 @@ const CBXL_DanhSachThuTuc = props => {
                     {thongTinHoSoModal.TenHoSo}
                   </Text>
 
-                  <View style={{flexDirection: 'row', width: 210}}>
+                  <View style={{flexDirection: 'row', width: 180}}>
                     <Text
                       style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
                       + Ngày nộp hồ sơ:
@@ -895,7 +901,7 @@ const CBXL_DanhSachThuTuc = props => {
                     </Text>
                   </View>
 
-                  <View style={{flexDirection: 'row', width: 210}}>
+                  <View style={{flexDirection: 'row', width: 180}}>
                     <Text
                       style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
                       + Ngày hẹn trả:
@@ -908,7 +914,7 @@ const CBXL_DanhSachThuTuc = props => {
                     </Text>
                   </View>
 
-                  <View style={{flexDirection: 'row', width: 210}}>
+                  <View style={{flexDirection: 'row', width: 180}}>
                     <Text
                       style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
                       + Đơn vị/ Cá nhân gửi:
@@ -919,9 +925,12 @@ const CBXL_DanhSachThuTuc = props => {
                     </Text>
                   </View>
 
-                  <View style={{flexDirection: 'row', width: 210}}>
+                  <View style={{flexDirection: 'row', width: 180}}>
                     <Text
-                      style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
+                      style={[
+                        styles.textDuLieuThongTinHoSo,
+                        {marginLeft: 10, width: 170},
+                      ]}>
                       + Đơn vị/ Cá nhân tiếp nhận:
                     </Text>
                     <Text style={[styles.textDuLieuThongTinHoSo]}>
@@ -930,7 +939,7 @@ const CBXL_DanhSachThuTuc = props => {
                     </Text>
                   </View>
 
-                  <View style={{flexDirection: 'row', width: 210}}>
+                  <View style={{flexDirection: 'row', width: 180}}>
                     <Text
                       style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
                       + Trạng thái hồ sơ:
@@ -1289,7 +1298,7 @@ const styles = StyleSheet.create({
   },
 
   viewSTT: {
-    width: 50,
+    width: 70,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -1298,7 +1307,7 @@ const styles = StyleSheet.create({
   },
 
   viewTenThuTuc: {
-    width: 265,
+    width: 260,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -1307,7 +1316,7 @@ const styles = StyleSheet.create({
   },
 
   viewLinhVuc: {
-    flex: 1,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -1331,7 +1340,7 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewSTT: {
-    width: 50,
+    width: 70,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -1339,14 +1348,14 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewTenThuTuc: {
-    width: 265,
+    width: 260,
     marginLeft: 1.5,
     marginRight: 1,
     justifyContent: 'center',
   },
 
   chiTietViewLinhVuc: {
-    flex: 1,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderLeftWidth: 0.3,
@@ -1432,7 +1441,7 @@ const styles = StyleSheet.create({
 
   textTouchableOpacity: {
     color: '#ffffff',
-    fontSize: 23,
+    fontSize: 19,
     marginLeft: 15,
     fontWeight: 'bold',
   },
@@ -1445,7 +1454,7 @@ const styles = StyleSheet.create({
   },
 
   viewSTT1: {
-    width: 25,
+    width: 70,
     height: '100%',
     justifyContent: 'center',
     backgroundColor: '#245d7c',
@@ -1455,7 +1464,7 @@ const styles = StyleSheet.create({
   },
 
   viewTenHoSo: {
-    width: 145,
+    width: 180,
     justifyContent: 'center',
     backgroundColor: '#245d7c',
     borderRightColor: '#ffffff',
@@ -1463,7 +1472,7 @@ const styles = StyleSheet.create({
   },
 
   viewDonViCaNhanGui: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     backgroundColor: '#245d7c',
     borderRightWidth: 1,
@@ -1472,7 +1481,7 @@ const styles = StyleSheet.create({
   },
 
   viewDonViCaNhanTiepNhan: {
-    width: 69,
+    width: 120,
     justifyContent: 'center',
     backgroundColor: '#245d7c',
     borderRightColor: '#ffffff',
@@ -1480,7 +1489,7 @@ const styles = StyleSheet.create({
   },
 
   viewTrangThaiHoSo: {
-    width: 80,
+    width: 130,
     justifyContent: 'center',
     backgroundColor: '#245d7c',
     borderTopRightRadius: 8,
@@ -1502,28 +1511,28 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietSTT: {
-    width: 25,
+    width: 70,
     justifyContent: 'center',
     borderRightColor: 'gray',
     borderRightWidth: 0.5,
   },
 
   viewChiTietTenHoSo: {
-    width: 145,
+    width: 180,
     justifyContent: 'center',
     borderRightColor: 'gray',
     borderRightWidth: 0.5,
   },
 
   viewChiTietDonViCaNhanGui: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     borderRightColor: 'gray',
     borderRightWidth: 0.5,
   },
 
   viewChiTietDonViCaNhanTiepNhan: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightColor: 'gray',
@@ -1531,7 +1540,7 @@ const styles = StyleSheet.create({
   },
 
   viewChietTrangThaiHoSo: {
-    width: 80,
+    width: 130,
     justifyContent: 'center',
   },
 

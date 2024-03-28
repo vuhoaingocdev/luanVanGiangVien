@@ -108,58 +108,60 @@ const TheoDoiDeNghi = props => {
       <View style={styles.body}>
         <Text style={styles.textTieuDe}>DANH SÁCH HỒ SƠ ĐÃ GỬI</Text>
 
-        <ScrollView>
-          {/* Danh sách thủ tục */}
-          <View style={styles.danhSachThuTucTieuDe}>
-            <View style={styles.viewSTT}>
-              <Text style={styles.text}>STT</Text>
+        <ScrollView horizontal>
+          <ScrollView>
+            {/* Danh sách thủ tục */}
+            <View style={styles.danhSachThuTucTieuDe}>
+              <View style={styles.viewSTT}>
+                <Text style={styles.text}>STT</Text>
+              </View>
+
+              <View style={styles.viewTenThuTuc}>
+                <Text style={styles.text}>Tên thủ tục</Text>
+              </View>
+
+              <View style={styles.viewNgayGui}>
+                <Text style={styles.text}>Ngày gửi</Text>
+              </View>
+
+              <View style={styles.viewTrangThai}>
+                <Text style={styles.text}>Trạng thái</Text>
+              </View>
             </View>
 
-            <View style={styles.viewTenThuTuc}>
-              <Text style={styles.text}>Tên thủ tục</Text>
+            <View>
+              {danhSachHoSoDaGui.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    props.navigation.navigate('ChiTietHoSo', {
+                      idGuiYeuCau: item.idGuiYeuCau,
+                      trangThai: item.trangThai,
+                    });
+                  }}>
+                  <View style={styles.chiTietDanhSachHoSoDaGui}>
+                    <View style={styles.chiTietViewSTT}>
+                      <Text style={styles.text1}>{index + 1}</Text>
+                    </View>
+
+                    <View style={styles.chiTietViewTenThuTuc}>
+                      <Text style={styles.text1}>{item.tenThuTuc}</Text>
+                    </View>
+
+                    <View style={styles.chiTietViewNgayGui}>
+                      <Text style={styles.text1}>
+                        {item.ngayGui ? formatDate(item.ngayGui) : ''}
+                      </Text>
+                    </View>
+
+                    <View style={styles.chiTietViewTrangThai}>
+                      <Text style={styles.text1}>{item.trangThai}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
-
-            <View style={styles.viewNgayGui}>
-              <Text style={styles.text}>Ngày gửi</Text>
-            </View>
-
-            <View style={styles.viewTrangThai}>
-              <Text style={styles.text}>Trạng thái</Text>
-            </View>
-          </View>
-
-          <View style={{alignItems: 'center', width: getWidth}}>
-            {danhSachHoSoDaGui.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  props.navigation.navigate('ChiTietHoSo', {
-                    idGuiYeuCau: item.idGuiYeuCau,
-                    trangThai: item.trangThai,
-                  });
-                }}>
-                <View style={styles.chiTietDanhSachHoSoDaGui}>
-                  <View style={styles.chiTietViewSTT}>
-                    <Text style={styles.text1}>{index + 1}</Text>
-                  </View>
-
-                  <View style={styles.chiTietViewTenThuTuc}>
-                    <Text style={styles.text1}>{item.tenThuTuc}</Text>
-                  </View>
-
-                  <View style={styles.chiTietViewNgayGui}>
-                    <Text style={styles.text1}>
-                      {item.ngayGui ? formatDate(item.ngayGui) : ''}
-                    </Text>
-                  </View>
-
-                  <View style={styles.chiTietViewTrangThai}>
-                    <Text style={styles.text1}>{item.trangThai}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          </ScrollView>
         </ScrollView>
       </View>
 
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
   },
 
   viewSTT: {
-    width: 40,
+    width: 60,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
   },
 
   viewTenThuTuc: {
-    width: 170,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
   },
 
   viewNgayGui: {
-    width: 90,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   },
 
   viewTrangThai: {
-    width: 95,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -241,11 +243,9 @@ const styles = StyleSheet.create({
   },
 
   chiTietDanhSachHoSoDaGui: {
-    width: 399,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 70,
-    borderWidth: 0.5,
     marginBottom: 15,
     borderRadius: 8,
     borderColor: 'gray',
@@ -254,10 +254,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: {width: 0, height: 2},
     elevation: 7,
+    marginLeft: 5,
+    marginRight: 5,
   },
 
   chiTietViewSTT: {
-    width: 40,
+    width: 60,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -265,7 +267,7 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewTenThuTuc: {
-    width: 171,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewNgayGui: {
-    width: 91,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -281,8 +283,7 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewTrangThai: {
-    //width: 96,
-    flex: 1,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
   },

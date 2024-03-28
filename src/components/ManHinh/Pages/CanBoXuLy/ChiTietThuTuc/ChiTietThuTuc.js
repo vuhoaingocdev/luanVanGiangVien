@@ -902,7 +902,20 @@ const Chitiethosoxuly = props => {
   const handleCloseModal10 = () => {
     setShowModal10(false);
   };
-
+  const [showModal11, setShowModal11] = useState(false);
+  const handleModalPress11 = () => {
+    setShowModal11(true);
+  };
+  const handleCloseModal11 = () => {
+    setShowModal11(false);
+  };
+  const [showModal12, setShowModal12] = useState(false);
+  const handleModalPress12 = () => {
+    setShowModal12(true);
+  };
+  const handleCloseModal12 = () => {
+    setShowModal12(false);
+  };
   const saveBufferToFile = async (bufferData, fileName, directory) => {
     try {
       // Tạo thư mục nếu chưa tồn tại
@@ -922,9 +935,10 @@ const Chitiethosoxuly = props => {
       await RNFS.writeFile(filePath, bufferData, 'base64');
 
       console.log('Ghi tệp thành công:', filePath);
-
+      handleModalPress11();
       return filePath; // Trả về đường dẫn của tệp đã ghi
     } catch (error) {
+      handleModalPress12();
       console.error('Lỗi khi ghi tệp:', error);
       throw error;
     }
@@ -993,7 +1007,16 @@ const Chitiethosoxuly = props => {
         onClose={handleCloseModal10}
         message="Hãy chọn tệp đún định dạng : Ảnh hoặc .PDF!!!"
       />
-
+      <ModalThongBao
+        visible={showModal11}
+        onClose={handleCloseModal11}
+        message="Tải xuống tệp thành công!!!"
+      />
+      <ModalThongBao
+        visible={showModal12}
+        onClose={handleCloseModal12}
+        message="Quá trình tải tệp lỗi.Hãy thử lại!!!"
+      />
       <ScrollView>
         <View>
           <View style={styles.tieudelon}>
@@ -1136,7 +1159,7 @@ const Chitiethosoxuly = props => {
                   <Text
                     style={[
                       styles.TextNormal,
-                      {textAlign: 'left', width: 280},
+                      {textAlign: 'left', width: 240},
                     ]}>
                     {tabledata.MC_TTHC_GV_TenThuTuc}
                   </Text>
@@ -1471,13 +1494,13 @@ const Chitiethosoxuly = props => {
                                           width: 25,
                                           height: 25,
                                           marginTop: 2.5,
-                                          marginLeft: 1,
+                                          marginLeft: -3,
                                         }}
                                       />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
-                                <View style={{marginTop: 10, marginLeft: -25}}>
+                                <View style={{marginTop: 10, marginLeft: -30}}>
                                   <Text
                                     style={[
                                       styles.TextNormal,
@@ -1793,7 +1816,7 @@ const Chitiethosoxuly = props => {
                                       styles.TextNormal,
                                       {alignItems: 'center', marginTop: 7},
                                     ]}>
-                                    Trưởng/phó đơn vị
+                                    Trưởng/phó đv
                                   </Text>
                                 </View>
                               ) : null}
@@ -1848,13 +1871,13 @@ const Chitiethosoxuly = props => {
                                           width: 25,
                                           height: 25,
                                           marginTop: 2.5,
-                                          marginLeft: 1,
+                                          marginLeft: -3,
                                         }}
                                       />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
-                                <View style={{marginTop: 10, marginLeft: -23}}>
+                                <View style={{marginTop: 10, marginLeft: -30}}>
                                   <Text
                                     style={[
                                       styles.TextNormal,
@@ -2468,7 +2491,7 @@ const Chitiethosoxuly = props => {
                                     styles.TextNormal,
                                     {alignItems: 'center', marginTop: 7},
                                   ]}>
-                                  Trưởng/Phó đơn vị
+                                  Trưởng/Phó đv
                                 </Text>
                               </View>
                             </View>
@@ -2789,13 +2812,13 @@ const Chitiethosoxuly = props => {
                                           width: 25,
                                           height: 25,
                                           marginTop: 2.5,
-                                          marginLeft: 1,
+                                          marginLeft: -3,
                                         }}
                                       />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
-                                <View style={{marginTop: 10, marginLeft: -20}}>
+                                <View style={{marginTop: 10, marginLeft: -30}}>
                                   <Text
                                     style={[
                                       styles.TextNormal,
@@ -3164,13 +3187,13 @@ const Chitiethosoxuly = props => {
                                           width: 25,
                                           height: 25,
                                           marginTop: 2.5,
-                                          marginLeft: 1,
+                                          marginLeft: -3,
                                         }}
                                       />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
-                                <View style={{marginTop: 10, marginLeft: -20}}>
+                                <View style={{marginTop: 10, marginLeft: -30}}>
                                   <Text
                                     style={[
                                       styles.TextNormal,
@@ -3531,83 +3554,90 @@ const Chitiethosoxuly = props => {
                 {getTrangThai1}
               </Text>
 
-              <View style={styles.danhSachThuTucTieuDe}>
-                <View style={styles.viewSTT}>
-                  <Text style={styles.textWhite1}>STT</Text>
-                </View>
+              <ScrollView horizontal>
+                <ScrollView>
+                  <View style={styles.danhSachThuTucTieuDe}>
+                    <View style={styles.viewSTT}>
+                      <Text style={styles.textWhite1}>STT</Text>
+                    </View>
 
-                <View style={styles.viewNguoiXyLy}>
-                  <Text style={styles.textWhite1}>Người xử lý</Text>
-                </View>
+                    <View style={styles.viewNguoiXyLy}>
+                      <Text style={styles.textWhite1}>Người xử lý</Text>
+                    </View>
 
-                <View style={styles.viewNgayHenTra}>
-                  <Text style={styles.textWhite1}>Ngày hẹn trả</Text>
-                </View>
+                    <View style={styles.viewNgayHenTra}>
+                      <Text style={styles.textWhite1}>Ngày hẹn trả</Text>
+                    </View>
 
-                <View style={styles.viewNoiTraKetQua}>
-                  <Text style={styles.textWhite1}>Nơi trả kết quả</Text>
-                </View>
-                <View style={styles.viewNgayXuLi}>
-                  <Text style={styles.textWhite1}>Ngày xử lý</Text>
-                </View>
-              </View>
+                    <View style={styles.viewNoiTraKetQua}>
+                      <Text style={styles.textWhite1}>Nơi trả kết quả</Text>
+                    </View>
+                    <View style={styles.viewNgayXuLi}>
+                      <Text style={styles.textWhite1}>Ngày xử lý</Text>
+                    </View>
+                  </View>
 
-              {chiTietTiepNhanHoSo ? (
-                chiTietTiepNhanHoSo.length !== 0 ? (
-                  chiTietTiepNhanHoSo.map((item, index) => (
-                    <View style={styles.chiTietDanhSachHoSo1} key={index}>
-                      <View style={styles.viewChiTietSTT}>
-                        <Text style={styles.text1}>{index + 1}</Text>
-                      </View>
+                  {chiTietTiepNhanHoSo ? (
+                    chiTietTiepNhanHoSo.length !== 0 ? (
+                      chiTietTiepNhanHoSo.map((item, index) => (
+                        <View style={styles.chiTietDanhSachHoSo1} key={index}>
+                          <View style={styles.viewChiTietSTT}>
+                            <Text style={styles.text1}>{index + 1}</Text>
+                          </View>
 
-                      <View style={styles.viewChiTietNguoiXyLy}>
-                        <Text style={styles.text1}>{item.nguoiXuLy} </Text>
-                      </View>
+                          <View style={styles.viewChiTietNguoiXyLy}>
+                            <Text style={styles.text1}>{item.nguoiXuLy} </Text>
+                          </View>
 
-                      <View style={styles.viewChiTietNgayHenTra}>
-                        <Text style={styles.text1}>
-                          {item.ngayHenTra
-                            ? moment(item.ngayHenTra).format(
-                                'DD/MM/YYYY HH:mm:ss',
-                              )
-                            : ''}
-                        </Text>
-                      </View>
+                          <View style={styles.viewChiTietNgayHenTra}>
+                            <Text style={styles.text1}>
+                              {item.ngayHenTra
+                                ? moment(item.ngayHenTra).format(
+                                    'DD/MM/YYYY HH:mm:ss',
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
 
-                      <View style={styles.viewChiTietNoiTraKetQua}>
-                        <Text style={styles.text1}>{item.noiTraKetQua} </Text>
-                      </View>
+                          <View style={styles.viewChiTietNoiTraKetQua}>
+                            <Text style={styles.text1}>
+                              {item.noiTraKetQua}{' '}
+                            </Text>
+                          </View>
 
-                      <View style={styles.viewChiTietNgayXuLy}>
-                        <Text style={styles.text1}>
-                          {item.ngayXuLy1
-                            ? moment(item.ngayXuLy1).format(
-                                'DD/MM/YYYY HH:mm:ss',
-                              )
-                            : ''}
+                          <View style={styles.viewChiTietNgayXuLy}>
+                            <Text style={styles.text1}>
+                              {item.ngayXuLy1
+                                ? moment(item.ngayXuLy1).format(
+                                    'DD/MM/YYYY HH:mm:ss',
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
+                        </View>
+                      ))
+                    ) : null
+                  ) : hasData ? (
+                    <View style={styles.viewNoData}>
+                      <Text style={styles.textNoData}>Không có dữ liệu!</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.viewModel}>
+                      <View style={styles.loaderContainer}>
+                        <ActivityIndicator
+                          color="gray"
+                          size="small"
+                          style={{borderRadius: 10, overflow: 'hidden'}}
+                        />
+                        <Text
+                          style={{color: 'gray', fontSize: 20, marginLeft: 15}}>
+                          Vui lòng đợi...
                         </Text>
                       </View>
                     </View>
-                  ))
-                ) : null
-              ) : hasData ? (
-                <View style={styles.viewNoData}>
-                  <Text style={styles.textNoData}>Không có dữ liệu!</Text>
-                </View>
-              ) : (
-                <View style={styles.viewModel}>
-                  <View style={styles.loaderContainer}>
-                    <ActivityIndicator
-                      color="gray"
-                      size="small"
-                      style={{borderRadius: 10, overflow: 'hidden'}}
-                    />
-                    <Text style={{color: 'gray', fontSize: 20, marginLeft: 15}}>
-                      Vui lòng đợi...
-                    </Text>
-                  </View>
-                </View>
-              )}
+                  )}
+                </ScrollView>
+              </ScrollView>
               <TouchableOpacity style={styles.closeButton} onPress={Close}>
                 <Text style={styles.textStyle}>Đóng</Text>
               </TouchableOpacity>
@@ -3690,7 +3720,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietSTT: {
-    width: 30,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3699,7 +3729,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNguoiXyLy: {
-    width: 110,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3708,7 +3738,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNgayHenTra: {
-    width: 70,
+    width: 100,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3717,7 +3747,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNoiTraKetQua: {
-    width: 90,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3726,7 +3756,7 @@ const styles = StyleSheet.create({
   },
 
   viewChiTietNgayXuLy: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f8f8ff',
@@ -3761,18 +3791,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   viewSTT: {
-    width: 30,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
     borderTopLeftRadius: 13,
-    marginLeft: 20,
+    marginLeft: 0,
     borderRightWidth: 1,
     borderColor: '#ffff',
   },
 
   viewNguoiXyLy: {
-    width: 110,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3781,7 +3811,7 @@ const styles = StyleSheet.create({
   },
 
   viewNgayHenTra: {
-    width: 70,
+    width: 100,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3790,7 +3820,7 @@ const styles = StyleSheet.create({
   },
 
   viewNoiTraKetQua: {
-    width: 90,
+    width: 130,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3799,7 +3829,7 @@ const styles = StyleSheet.create({
   },
 
   viewNgayXuLi: {
-    width: 70,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3822,7 +3852,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'black',
-    fontSize: 17,
+    fontSize: 14.5,
   },
   chiTietViewTenCongViec: {
     width: 162,
@@ -3975,7 +4005,7 @@ const styles = StyleSheet.create({
 
     height: 50,
     marginTop: 10,
-    marginLeft: 40,
+    marginLeft: 30,
     width: '70%',
     borderRadius: 40,
     justifyContent: 'center',
@@ -4007,7 +4037,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     height: 50,
     marginTop: 10,
-    marginLeft: 40,
+    marginLeft: 30,
     width: '70%',
     borderRadius: 40,
     justifyContent: 'center',
@@ -4026,6 +4056,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 25,
     borderRadius: 20,
+    width: 0.8 * getWidth,
   },
   textTieuDe: {
     color: 'black',
@@ -4034,7 +4065,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   TextNormal: {
-    fontSize: 15,
+    fontSize: 14.5,
     color: 'black',
     textAlign: 'center',
   },

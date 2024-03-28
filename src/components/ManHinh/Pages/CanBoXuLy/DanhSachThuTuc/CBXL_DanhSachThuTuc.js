@@ -1287,7 +1287,7 @@ const styles = StyleSheet.create({
 
   textDuLieuThongTinHoSo: {
     color: 'black',
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 6,
   },
 
@@ -1551,10 +1551,9 @@ const styles = StyleSheet.create({
   },
 
   modalView: {
-    width: 0.85 * getWidth,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 10,
+    padding: 25,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -3479,55 +3479,59 @@ const Chitiethosoxuly = props => {
             Quá trình xử lý hồ sơ
           </Text>
         </View>
-        {status3 ? (
-          <View style={styles.danhSachThuTucTieuDe}>
-            <View style={styles.viewBuoc}>
-              <Text style={styles.textWhite}>Bước</Text>
-            </View>
+        <ScrollView horizontal>
+          <ScrollView>
+            {status3 ? (
+              <View style={styles.danhSachThuTucTieuDe}>
+                <View style={styles.viewBuoc}>
+                  <Text style={styles.textWhite}>Bước</Text>
+                </View>
 
-            <View style={styles.viewTenCongViec}>
-              <Text style={styles.textWhite}>Công việc</Text>
-            </View>
+                <View style={styles.viewTenCongViec}>
+                  <Text style={styles.textWhite}>Công việc</Text>
+                </View>
 
-            <View style={styles.viewNgayXuLy}>
-              <Text style={styles.textWhite}>Ngày xử lý</Text>
-            </View>
-          </View>
-        ) : null}
-        {status3
-          ? MangQuyTrinh
-            ? MangQuyTrinh.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    Open(item.MC_TTHC_GV_TrangThai_TenTrangThai);
-                    console.log('Mảng chi tiết: ' + chiTietTiepNhanHoSo);
-                  }}>
-                  <View style={styles.chiTietDanhSachHoSo}>
-                    <View style={styles.chiTietViewBuoc}>
-                      <Text style={styles.text}>
-                        {item.MC_TTHC_GV_TrangThai_STT}
-                      </Text>
-                    </View>
-                    <View style={styles.chiTietViewTenCongViec}>
-                      <Text style={styles.text}>
-                        {item.MC_TTHC_GV_TrangThai_TenTrangThai}
-                      </Text>
-                    </View>
-                    <View style={styles.chiTietViewNgayXuLy}>
-                      <Text style={styles.text}>
-                        {item.MC_TTHC_GV_GuiYeuCau_DateEditor
-                          ? moment(item.MC_TTHC_GV_GuiYeuCau_DateEditor).format(
-                              'DD/MM/YYYY HH:mm:ss',
-                            )
-                          : ''}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))
-            : null
-          : null}
+                <View style={styles.viewNgayXuLy}>
+                  <Text style={styles.textWhite}>Ngày xử lý</Text>
+                </View>
+              </View>
+            ) : null}
+            {status3
+              ? MangQuyTrinh
+                ? MangQuyTrinh.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        Open(item.MC_TTHC_GV_TrangThai_TenTrangThai);
+                        console.log('Mảng chi tiết: ' + chiTietTiepNhanHoSo);
+                      }}>
+                      <View style={styles.chiTietDanhSachHoSo}>
+                        <View style={styles.chiTietViewBuoc}>
+                          <Text style={styles.text}>
+                            {item.MC_TTHC_GV_TrangThai_STT}
+                          </Text>
+                        </View>
+                        <View style={styles.chiTietViewTenCongViec}>
+                          <Text style={styles.text}>
+                            {item.MC_TTHC_GV_TrangThai_TenTrangThai}
+                          </Text>
+                        </View>
+                        <View style={styles.chiTietViewNgayXuLy}>
+                          <Text style={styles.text}>
+                            {item.MC_TTHC_GV_GuiYeuCau_DateEditor
+                              ? moment(
+                                  item.MC_TTHC_GV_GuiYeuCau_DateEditor,
+                                ).format('DD/MM/YYYY HH:mm:ss')
+                              : ''}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))
+                : null
+              : null}
+          </ScrollView>
+        </ScrollView>
 
         <Modal
           animationType="fade"
@@ -3695,7 +3699,7 @@ const styles = StyleSheet.create({
 
   TitleText: {
     color: 'black',
-    fontSize: 21,
+    fontSize: 19,
     fontWeight: 'bold',
   },
 
@@ -3843,7 +3847,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   chiTietViewBuoc: {
-    width: 55,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3855,7 +3859,7 @@ const styles = StyleSheet.create({
     fontSize: 14.5,
   },
   chiTietViewTenCongViec: {
-    width: 162,
+    width: 180,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3863,7 +3867,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8ff',
   },
   chiTietViewNgayXuLy: {
-    flex: 1,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightColor: 'gray',
@@ -3871,12 +3875,11 @@ const styles = StyleSheet.create({
   },
   chiTietDanhSachHoSo: {
     marginLeft: 6,
-    width: 399,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 67,
     marginBottom: 13,
-    borderRadius: 8,
+    borderRadius: 10,
     borderColor: 'gray',
     shadowColor: 'black',
     shadowOpacity: 0.8,
@@ -3885,7 +3888,7 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   viewNgayXuLy: {
-    width: 180,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3893,11 +3896,11 @@ const styles = StyleSheet.create({
   },
   textWhite: {
     color: '#ffffff',
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   viewTenCongViec: {
-    width: 160,
+    width: 180,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3906,7 +3909,7 @@ const styles = StyleSheet.create({
   },
 
   viewBuoc: {
-    width: 55,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3918,6 +3921,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 8,
     justifyContent: 'center',
+    marginLeft: 2,
   },
   viewFooter: {
     height: '10%',
@@ -4056,7 +4060,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 25,
     borderRadius: 20,
-    width: 0.8 * getWidth,
+    width: 0.83 * getWidth,
   },
   textTieuDe: {
     color: 'black',

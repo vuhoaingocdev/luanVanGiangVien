@@ -311,66 +311,71 @@ const ChiTietHoSo = props => {
           </Text>
 
           <View>
-            <View style={styles.danhSachThuTucTieuDe}>
-              <View style={styles.viewBuoc}>
-                <Text style={styles.textWhite}>Bước</Text>
-              </View>
+            <ScrollView horizontal>
+              <ScrollView>
+                <View style={styles.danhSachThuTucTieuDe}>
+                  <View style={styles.viewBuoc}>
+                    <Text style={styles.textWhite}>Bước</Text>
+                  </View>
 
-              <View style={styles.viewTenCongViec}>
-                <Text style={styles.textWhite}>Công việc</Text>
-              </View>
+                  <View style={styles.viewTenCongViec}>
+                    <Text style={styles.textWhite}>Công việc</Text>
+                  </View>
 
-              <View style={styles.viewNgayXuLy}>
-                <Text style={styles.textWhite}>Ngày xử lý</Text>
-              </View>
-            </View>
+                  <View style={styles.viewNgayXuLy}>
+                    <Text style={styles.textWhite}>Ngày xử lý</Text>
+                  </View>
+                </View>
 
-            <View style={{alignItems: 'center', width: getWidth}}>
-              {quaTrinhXuLy.length !== 0 ? (
-                quaTrinhXuLy.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      Open(item.trangThai);
-                    }}>
-                    <View style={styles.chiTietDanhSachHoSo}>
-                      <View style={styles.chiTietViewBuoc}>
-                        <Text style={styles.text}>{item.soThuTu}</Text>
-                      </View>
-                      <View style={styles.chiTietViewTenCongViec}>
-                        <Text style={styles.text}>{item.trangThai}</Text>
-                      </View>
-                      <View style={styles.chiTietViewNgayXuLy}>
-                        <Text style={styles.text}>
-                          {item.ngayXuLy
-                            ? moment(item.ngayXuLy).format(
-                                'DD/MM/YYYY HH:mm:ss',
-                              )
-                            : ''}
+                <View>
+                  {quaTrinhXuLy.length !== 0 ? (
+                    quaTrinhXuLy.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          Open(item.trangThai);
+                        }}>
+                        <View style={styles.chiTietDanhSachHoSo}>
+                          <View style={styles.chiTietViewBuoc}>
+                            <Text style={styles.text}>{item.soThuTu}</Text>
+                          </View>
+                          <View style={styles.chiTietViewTenCongViec}>
+                            <Text style={styles.text}>{item.trangThai}</Text>
+                          </View>
+                          <View style={styles.chiTietViewNgayXuLy}>
+                            <Text style={styles.text}>
+                              {item.ngayXuLy
+                                ? moment(item.ngayXuLy).format(
+                                    'DD/MM/YYYY HH:mm:ss',
+                                  )
+                                : ''}
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    ))
+                  ) : hasData ? (
+                    <View style={styles.viewNoData}>
+                      <Text style={styles.textNoData}>Không có dữ liệu!</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.viewModel}>
+                      <View style={styles.loaderContainer}>
+                        <ActivityIndicator
+                          color="gray"
+                          size="small"
+                          style={{borderRadius: 10, overflow: 'hidden'}}
+                        />
+                        <Text
+                          style={{color: 'gray', fontSize: 20, marginLeft: 15}}>
+                          Vui lòng đợi...
                         </Text>
                       </View>
                     </View>
-                  </TouchableOpacity>
-                ))
-              ) : hasData ? (
-                <View style={styles.viewNoData}>
-                  <Text style={styles.textNoData}>Không có dữ liệu!</Text>
+                  )}
                 </View>
-              ) : (
-                <View style={styles.viewModel}>
-                  <View style={styles.loaderContainer}>
-                    <ActivityIndicator
-                      color="gray"
-                      size="small"
-                      style={{borderRadius: 10, overflow: 'hidden'}}
-                    />
-                    <Text style={{color: 'gray', fontSize: 20, marginLeft: 15}}>
-                      Vui lòng đợi...
-                    </Text>
-                  </View>
-                </View>
-              )}
-            </View>
+              </ScrollView>
+            </ScrollView>
           </View>
         </ScrollView>
 
@@ -422,6 +427,7 @@ const ChiTietHoSo = props => {
                         <Text style={styles.textWhite1}>Ngày xử lý</Text>
                       </View>
                     </View>
+
                     {chiTietTiepNhanHoSo.length !== 0 ? (
                       chiTietTiepNhanHoSo.map((item, index) => (
                         <View style={styles.chiTietDanhSachHoSo1} key={index}>
@@ -559,6 +565,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     marginTop: 8,
     justifyContent: 'center',
+    marginHorizontal: 5,
   },
 
   danhSachThuTucTieuDe1: {
@@ -577,7 +584,7 @@ const styles = StyleSheet.create({
   },
 
   viewTenCongViec: {
-    width: 160,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -594,7 +601,6 @@ const styles = StyleSheet.create({
   },
 
   chiTietDanhSachHoSo: {
-    width: 399,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 67,
@@ -606,6 +612,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: {width: 0, height: 2},
     elevation: 7,
+    marginHorizontal: 5,
   },
 
   chiTietViewBuoc: {
@@ -618,7 +625,7 @@ const styles = StyleSheet.create({
   },
 
   chiTietViewTenCongViec: {
-    width: 162,
+    width: 200,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,

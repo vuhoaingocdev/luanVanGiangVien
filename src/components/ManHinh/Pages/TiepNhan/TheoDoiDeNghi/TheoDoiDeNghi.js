@@ -110,7 +110,6 @@ const TheoDoiDeNghi = props => {
 
         <ScrollView horizontal>
           <ScrollView>
-            {/* Danh sách thủ tục */}
             <View style={styles.danhSachThuTucTieuDe}>
               <View style={styles.viewSTT}>
                 <Text style={styles.text}>STT</Text>

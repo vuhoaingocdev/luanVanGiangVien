@@ -1438,7 +1438,11 @@ const Chitiethosoxuly = props => {
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
                                   ]}>
                                   Người nộp hồ sơ
                                 </Text>
@@ -1623,7 +1627,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 50,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -1667,6 +1671,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -1793,7 +1798,11 @@ const Chitiethosoxuly = props => {
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
                                   ]}>
                                   Người nộp hồ sơ
                                 </Text>
@@ -1802,7 +1811,7 @@ const Chitiethosoxuly = props => {
                                 <View
                                   style={{
                                     flexDirection: 'row',
-                                    marginLeft: 15,
+                                    marginLeft: 0,
                                   }}>
                                   <CheckBox
                                     value={checkedTPDV}
@@ -1812,11 +1821,14 @@ const Chitiethosoxuly = props => {
                                     }}
                                   />
                                   <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {alignItems: 'center', marginTop: 7},
-                                    ]}>
-                                    Trưởng/phó đv
+                                    style={{
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      textAlign: 'center',
+                                      color: 'black',
+                                      fontSize: 13,
+                                    }}>
+                                    Trưởng/phó đơn vị
                                   </Text>
                                 </View>
                               ) : null}
@@ -2000,7 +2012,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 60,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -2044,6 +2056,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -2187,7 +2200,11 @@ const Chitiethosoxuly = props => {
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
                                   ]}>
                                   Cán bộ xử lý
                                 </Text>
@@ -2339,7 +2356,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 50,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -2383,6 +2400,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -2487,11 +2505,14 @@ const Chitiethosoxuly = props => {
                                   }}
                                 />
                                 <Text
-                                  style={[
-                                    styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
-                                  ]}>
-                                  Trưởng/Phó đv
+                                  style={{
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    textAlign: 'center',
+                                    color: 'black',
+                                    fontSize: 13,
+                                  }}>
+                                  Trưởng/Phó đơn vị
                                 </Text>
                               </View>
                             </View>
@@ -2613,7 +2634,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 50,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -2638,6 +2659,7 @@ const Chitiethosoxuly = props => {
                                     color: 'black',
                                     fontSize: 16,
                                     textAlign: 'center',
+                                    marginTop: 16,
                                   }}>
                                   Chọn tệp
                                 </Text>
@@ -2657,6 +2679,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -2755,7 +2778,11 @@ const Chitiethosoxuly = props => {
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
                                   ]}>
                                   Người nộp hồ sơ
                                 </Text>
@@ -2941,7 +2968,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 50,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -2985,6 +3012,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -3118,21 +3146,13 @@ const Chitiethosoxuly = props => {
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
                                   ]}>
                                   Người nộp hồ sơ
-                                </Text>
-                              </View>
-
-                              <View
-                                style={{flexDirection: 'row', marginLeft: 15}}>
-                                <CheckBox />
-                                <Text
-                                  style={[
-                                    styles.TextNormal,
-                                    {alignItems: 'center', marginTop: 7},
-                                  ]}>
-                                  Trưởng/phó đơn vị
                                 </Text>
                               </View>
                             </View>
@@ -3316,7 +3336,7 @@ const Chitiethosoxuly = props => {
                                 backgroundColor: '#ffffff',
                                 borderWidth: 1,
                                 borderRadius: 5,
-                                height: 70,
+                                height: 50,
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
@@ -3360,6 +3380,7 @@ const Chitiethosoxuly = props => {
                                         marginLeft: 3,
                                         textAlign: 'left',
                                         width: '90%',
+                                        marginTop: 16,
                                       },
                                     ]}>
                                     {FileName ? FileName : 'Chưa có tệp'}
@@ -3503,7 +3524,7 @@ const Chitiethosoxuly = props => {
                       key={index}
                       onPress={() => {
                         Open(item.MC_TTHC_GV_TrangThai_TenTrangThai);
-                        console.log('Mảng chi tiết: ' + chiTietTiepNhanHoSo);
+                        //console.log('Mảng chi tiết: ' + chiTietTiepNhanHoSo);
                       }}>
                       <View style={styles.chiTietDanhSachHoSo}>
                         <View style={styles.chiTietViewBuoc}>
@@ -3709,7 +3730,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   chiTietDanhSachHoSo1: {
-    width: 0.9 * getWidth,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 65,
@@ -3847,7 +3867,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   chiTietViewBuoc: {
-    width: 50,
+    width: 55,
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.3,
@@ -3874,12 +3894,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8ff',
   },
   chiTietDanhSachHoSo: {
-    marginLeft: 6,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     height: 67,
     marginBottom: 13,
-    borderRadius: 10,
+    borderRadius: 8,
     borderColor: 'gray',
     shadowColor: 'black',
     shadowOpacity: 0.8,
@@ -3888,7 +3907,7 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   viewNgayXuLy: {
-    width: 200,
+    width: 180,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3909,7 +3928,7 @@ const styles = StyleSheet.create({
   },
 
   viewBuoc: {
-    width: 50,
+    width: 55,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#245d7c',
@@ -3920,8 +3939,6 @@ const styles = StyleSheet.create({
     height: 35,
     marginBottom: 7,
     marginTop: 8,
-    justifyContent: 'center',
-    marginLeft: 2,
   },
   viewFooter: {
     height: '10%',
@@ -4060,7 +4077,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 25,
     borderRadius: 20,
-    width: 0.83 * getWidth,
+    width: 0.84 * getWidth,
   },
   textTieuDe: {
     color: 'black',

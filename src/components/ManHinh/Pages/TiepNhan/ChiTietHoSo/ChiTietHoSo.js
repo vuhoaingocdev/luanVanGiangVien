@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   text11: {
     color: 'black',
     fontSize: 14.5,
-    width: 300,
+    width: 270,
   },
 
   textBold: {

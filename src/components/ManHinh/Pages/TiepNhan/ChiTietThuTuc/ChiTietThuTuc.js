@@ -15,6 +15,7 @@ import {token} from '../../../../DangNhap/dangNhap';
 import {DataTable} from 'react-native-paper';
 import HeaderBack from '../../../Untils/HeaderBack';
 import Footer from '../../../Untils/Footer';
+import {maGiangVien} from '../../../../DangNhap/dangNhap';
 const getWidth = Dimensions.get('window').width;
 const getHeight = Dimensions.get('window').height;
 export var TableData1 = [];
@@ -83,6 +84,48 @@ const Chitietthutuc = props => {
       console.error(error);
     }
   };
+
+  //Số lượng hồ sơ gửi lên
+  //Lấy số lượng thủ tục gửi lên
+  const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
+  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
+  const getSoLuong = async () => {
+    const apiCall = async () => {
+      const response = await axios.get(apiSoLuongThuGuiLen, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (
+        response.status !== 400 &&
+        response.data &&
+        response.data.body &&
+        response.data.body.length > 0
+      ) {
+        const mangDanhSach = response.data.body.map(item => ({
+          idGuiYeuCau: item.MC_TTHC_GV_GuiYeuCau_ID,
+          tenThuTuc: item.MC_TTHC_GV_TenThuTuc,
+          ngayGui: item.MC_TTHC_GV_GuiYeuCau_NgayGui,
+          trangThai: item.MC_TTHC_GV_TrangThai_TenTrangThai,
+        }));
+
+        setSoLuongThuTucGuiLen(mangDanhSach.length);
+      } else {
+        setSoLuongThuTucGuiLen(0);
+      }
+    };
+
+    try {
+      await retry(apiCall);
+    } catch (error) {
+      console.error('API call failed after multiple attempts:', error);
+    }
+  };
+
+  useEffect(() => {
+    getSoLuong();
+  }, []);
 
   useEffect(() => {
     const idGuiYC = props.route.params.IDthutuc;
@@ -645,7 +688,7 @@ const Chitietthutuc = props => {
           </TouchableOpacity>
         </View>
       </View>
-      <Footer />
+      <Footer soLuongThuTuc={soLuongThuGuiLen} />
     </SafeAreaView>
   );
 };
@@ -714,7 +757,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginTop: 10,
   },
-  
+
   CellTableFirst: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -747,7 +790,7 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
   },
-  
+
   TextBold: {
     fontSize: 16,
     fontWeight: 'bold',

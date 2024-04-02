@@ -330,6 +330,7 @@ const Chitiethosoxuly = props => {
       setFirstViewHeight(670);
     }
   });
+
   const [checked, setChecked] = useState('');
   const [checked1, setChecked1] = useState('0');
   const [status, setstatus] = useState(true);

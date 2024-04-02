@@ -166,6 +166,7 @@ const CBXL_DanhSachThuTuc = props => {
           NgayHenTra: item.MC_TTHC_GV_GuiYeuCau_NgayHenTra,
           NgayNopHoSo: item.MC_TTHC_GV_GuiYeuCau_NgayGui,
           ToChucCaNhanNopHoSo: item.MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa,
+          TrangThaiID: item.MC_TTHC_GV_GuiYeuCau_TrangThai_ID,
         }));
 
         setDanhSachHoSoGuiLen(mangDanhSachHoSoGuiLen);
@@ -841,14 +842,18 @@ const CBXL_DanhSachThuTuc = props => {
                                 {
                                   fontWeight: 'bold',
                                   color:
-                                    item.TrangThai === 'Chưa tiếp nhận'
-                                      ? '#235d7c'
-                                      : item.TrangThai === 'Tiếp nhận hồ sơ'
-                                      ? 'green'
-                                      : 'red',
+                                    item.TrangThaiID == 0
+                                      ? '#F97316'
+                                      : item.TrangThaiID == -1
+                                      ? 'red'
+                                      : 'green',
                                 },
                               ]}>
-                              {item.TrangThai}
+                              {item.TrangThaiID == 0
+                                ? 'Chưa tiếp nhận'
+                                : item.TrangThaiID == -1
+                                ? 'Hủy trả hồ sơ'
+                                : item.TrangThai}
                             </Text>
                           </View>
                         </View>

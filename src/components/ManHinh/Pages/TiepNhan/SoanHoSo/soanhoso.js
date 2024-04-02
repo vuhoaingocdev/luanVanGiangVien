@@ -23,6 +23,7 @@ import CheckBox from 'react-native-check-box';
 import moment from 'moment';
 import {token} from '../../../../DangNhap/dangNhap';
 import axios from 'axios';
+import {maGiangVien} from '../../../../DangNhap/dangNhap';
 const getWidth = Dimensions.get('window').width;
 const getHeight = Dimensions.get('window').height;
 import RNFS from 'react-native-fs';
@@ -42,6 +43,27 @@ const Soanhoso = props => {
   const [nd, setnd] = useState('');
   const [sl, setsl] = useState('');
   const [FileName, setFileName] = useState([]);
+
+  //Retry
+  const retry = async (func, maxAttempts = 3, delay = 2000, backoff = 2) => {
+    let attempt = 1;
+    while (attempt <= maxAttempts) {
+      try {
+        const result = await func();
+        return result;
+      } catch (error) {
+        if (attempt === maxAttempts) {
+          throw error;
+        }
+        console.log(
+          `Lần ${attempt} thất bại. Đang thử lại trong ${delay / 2000} giây...`,
+        );
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= backoff;
+        attempt++;
+      }
+    }
+  };
 
   const readFileAsBase64 = async fileUri => {
     try {
@@ -83,6 +105,7 @@ const Soanhoso = props => {
       }
     }
   };
+
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
@@ -244,6 +267,49 @@ const Soanhoso = props => {
   const handleCloseModal9 = () => {
     setShowModal9(false);
   };
+
+  //Số lượng hồ sơ gửi lên
+  //Lấy số lượng thủ tục gửi lên
+  const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
+  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
+  const getSoLuong = async () => {
+    const apiCall = async () => {
+      const response = await axios.get(apiSoLuongThuGuiLen, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (
+        response.status !== 400 &&
+        response.data &&
+        response.data.body &&
+        response.data.body.length > 0
+      ) {
+        const mangDanhSach = response.data.body.map(item => ({
+          idGuiYeuCau: item.MC_TTHC_GV_GuiYeuCau_ID,
+          tenThuTuc: item.MC_TTHC_GV_TenThuTuc,
+          ngayGui: item.MC_TTHC_GV_GuiYeuCau_NgayGui,
+          trangThai: item.MC_TTHC_GV_TrangThai_TenTrangThai,
+        }));
+
+        setSoLuongThuTucGuiLen(mangDanhSach.length);
+      } else {
+        setSoLuongThuTucGuiLen(0);
+      }
+    };
+
+    try {
+      await retry(apiCall);
+    } catch (error) {
+      console.error('API call failed after multiple attempts:', error);
+    }
+  };
+
+  useEffect(() => {
+    getSoLuong();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderBack
@@ -694,7 +760,7 @@ const Soanhoso = props => {
           </TouchableOpacity>
         </View>
       </View>
-      <Footer />
+      <Footer soLuongThuTuc={soLuongThuGuiLen} />
     </SafeAreaView>
   );
 };

@@ -80,8 +80,11 @@ const CBXL_DanhSachThuTuc = props => {
 
   //Lấy dữ liệu từ api in ra danh sách thủ tục
   const [dataThuTuc, setDataThuTuc] = useState([]);
+  // const apiGetDuLieuDanhSachThuTuc =
+  //   'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=MaThuTuc';
+
   const apiGetDuLieuDanhSachThuTuc =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=MaThuTuc';
+    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/Load';
   const getMangDanhSachThuTuc = async () => {
     const callApi = async () => {
       const response = await axios.get(apiGetDuLieuDanhSachThuTuc, {

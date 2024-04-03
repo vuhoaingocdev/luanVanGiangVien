@@ -33,7 +33,7 @@ import {
   ThongTinGiangVien,
   getThongTinhGiangVien,
 } from '../../../../../api/GetThongTin/ThongTinGiangVien';
-import Index from '../..';
+var dem = 0;
 const Soanhoso = props => {
   const [checkboxColor, setCheckboxColor] = useState('#245d7c');
   const [checkboxUncheckedColor, setCheckboxUncheckedColor] = useState('gray');
@@ -80,22 +80,29 @@ const Soanhoso = props => {
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
-        allowMultiSelection: true,
       });
-      console.log(res[index].uri);
-      setFileName(FileName => FileName.push(res[index].name));
-      const base64Content1 = await readFileAsBase64(res[index].uri);
-      setBase64('data:' + res[index].type + ';base64,' + base64Content1);
-      setdatafile(dataFile =>
-        dataFile.push({
+      console.log(res[0].uri);
+
+      setFileName(FileName => {
+        const newFileName = [...FileName];
+        newFileName[index] = res[0].name;
+        return newFileName;
+      });
+      const base64Content1 = await readFileAsBase64(res[0].uri);
+      setBase64('data:' + res[0].type + ';base64,' + base64Content1);
+      setdatafile(dataFile => {
+        const newDataFile = [...dataFile];
+        newDataFile[index] = {
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc:
             TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: 1,
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile: base64Content,
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_TenFile: res[index].name,
-        }),
-      );
-
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile:
+            'data:' + res[0].type + ';base64,' + base64Content1,
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_TenFile: res[0].name,
+        };
+        return newDataFile;
+      });
+      dem++;
       //console.log(base64Content);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -113,33 +120,54 @@ const Soanhoso = props => {
     'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Add_Para';
   const PostYeuCau = async () => {
     var postdata = {
-      MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu: ThongTinGiangVien.MaNhanSu,
-      MC_TTHC_GV_GuiYeuCau_NhanSuGui_Email: email,
-      MC_TTHC_GV_GuiYeuCau_NhanSuGui_SDT: sdt,
-      MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa: ThongTinGiangVien.ChuyenMon,
-      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
-      MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: nd,
-      MC_TTHC_GV_GuiYeuCau_TrangThai_ID: TableData1.MC_TTHC_GV_IDMucDo,
+      MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu: ThongTinGiangVien.MaNhanSu
+        ? ThongTinGiangVien.MaNhanSu
+        : '',
+      MC_TTHC_GV_GuiYeuCau_NhanSuGui_Email: email ? email : '',
+      MC_TTHC_GV_GuiYeuCau_NhanSuGui_SDT: sdt ? sdt : '',
+      MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa: ThongTinGiangVien.ChuyenMon
+        ? ThongTinGiangVien.ChuyenMon
+        : '',
+      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID
+        ? TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID
+        : '',
+      MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: nd ? nd : '',
+      MC_TTHC_GV_GuiYeuCau_TrangThai_ID: TableData1.MC_TTHC_GV_IDMucDo
+        ? TableData1.MC_TTHC_GV_IDMucDo
+        : '',
       MC_TTHC_GV_GuiYeuCau_TrangThai_GhiChu: '',
       MC_TTHC_GV_GuiYeuCau_NgayGui: moment
         .utc(moment(), 'DD/MM/YYYY')
         .toISOString(),
-      MC_TTHC_GV_GuiYeuCau_KetQua_SoLuong: sl,
+      MC_TTHC_GV_GuiYeuCau_KetQua_SoLuong: sl ? sl : '',
       MC_TTHC_GV_GuiYeuCau_DaNop: 'true',
-      MC_TTHC_GV_GuiYeuCau_NgayHenTra: TableData1.MC_TTHC_GV_DateEditor,
-      MC_TTHC_GV_GuiYeuCau_NgayGiaoTra: TableData1.MC_TTHC_GV_DateCreate,
-      MC_TTHC_GV_GuiYeuCau_NoiTraKetQua: TableData1.MC_TTHC_GV_NoiTraKetQua,
-      MC_TTHC_GV_GuiYeuCau_TraKetQua_TenFile: FileName,
-      MC_TTHC_GV_GuiYeuCau_TraKetQua_DataFile: base64Content,
+      MC_TTHC_GV_GuiYeuCau_NgayHenTra: TableData1.MC_TTHC_GV_DateEditor
+        ? TableData1.MC_TTHC_GV_DateEditor
+        : '',
+      MC_TTHC_GV_GuiYeuCau_NgayGiaoTra: TableData1.MC_TTHC_GV_DateCreate
+        ? TableData1.MC_TTHC_GV_DateCreate
+        : '',
+      MC_TTHC_GV_GuiYeuCau_NoiTraKetQua: TableData1.MC_TTHC_GV_NoiTraKetQua
+        ? TableData1.MC_TTHC_GV_NoiTraKetQua
+        : '',
+      MC_TTHC_GV_GuiYeuCau_TraKetQua_TenFile: FileName[0] ? FileName[0] : '',
+      MC_TTHC_GV_GuiYeuCau_TraKetQua_DataFile: '',
       MC_TTHC_GV_GuiYeuCau_TrangThaiPheDuyetTruongPhong:
-        TableData1.MC_TTHC_GV_IsTruongPhongPheDuyet,
+        TableData1.MC_TTHC_GV_IsTruongPhongPheDuyet
+          ? TableData1.MC_TTHC_GV_IsTruongPhongPheDuyet
+          : '',
       MC_TTHC_GV_GuiYeuCau_MoTaTTPheDuyetTruongPhong: 'string',
       MC_TTHC_GV_GuiYeuCau_TrangThaiPheDuyetBGH:
-        TableData1.MC_TTHC_GV_IsBGHPheDuyet,
+        TableData1.MC_TTHC_GV_IsBGHPheDuyet
+          ? TableData1.MC_TTHC_GV_IsBGHPheDuyet
+          : '',
       MC_TTHC_GV_GuiYeuCau_MoTaTTPheDuyetBGH: 'string',
-      MC_TTHC_GV_GuiYeuCau_NguonTiepNhan: TableData1.MC_TTHC_GV_NguonTiepNhan,
+      MC_TTHC_GV_GuiYeuCau_NguonTiepNhan: TableData1.MC_TTHC_GV_NguonTiepNhan
+        ? TableData1.MC_TTHC_GV_NguonTiepNhan
+        : '',
     };
 
+   // console.log(postdata);
     try {
       const response = await axios.post(apiPhucKhao, postdata, {
         headers: {
@@ -151,7 +179,7 @@ const Soanhoso = props => {
         handleModalPress();
       } else {
         if (response.status == 200) {
-          handleModalPress1();
+          // handleModalPress1();
         }
       }
 
@@ -183,6 +211,9 @@ const Soanhoso = props => {
       }
 
       if (response.status === 403) {
+      }
+      if (response.status === 400) {
+        Alert.alert('Lỗi 2');
       }
     } catch (error) {
       console.error(error);
@@ -267,7 +298,6 @@ const Soanhoso = props => {
   const handleCloseModal9 = () => {
     setShowModal9(false);
   };
-
   //Số lượng hồ sơ gửi lên
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
@@ -375,7 +405,7 @@ const Soanhoso = props => {
             <View style={{width: '40%'}}>
               <Text style={styles.TextBold}>Tên thủ tục</Text>
             </View>
-            <View style={{width: '60%', flexDirection: 'row'}}>
+            <View style={{width: '50%', flexDirection: 'row'}}>
               <Text style={styles.TextBold}>: </Text>
               <Text style={styles.TextNormal}>
                 {TableData1.MC_TTHC_GV_TenThuTuc}
@@ -752,9 +782,10 @@ const Soanhoso = props => {
                 if (base64Content === '') {
                   handleModalPress5();
                 } else {
-                  PostYeuCau();
+                  PostYeuCau2();
                 }
               }
+              // console.log(dataFile[1]);
             }}>
             <Text style={{color: '#ffffff', fontSize: 19}}>Nộp hồ sơ</Text>
           </TouchableOpacity>

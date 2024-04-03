@@ -84,7 +84,7 @@ const CBXL_DanhSachThuTuc = props => {
   //   'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=MaThuTuc';
 
   const apiGetDuLieuDanhSachThuTuc =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/Load';
+    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=&TuKhoaTimKiem=&PhongBan';
   const getMangDanhSachThuTuc = async () => {
     const callApi = async () => {
       const response = await axios.get(apiGetDuLieuDanhSachThuTuc, {

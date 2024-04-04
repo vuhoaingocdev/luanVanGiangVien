@@ -944,7 +944,15 @@ const Chitiethosoxuly = props => {
       throw error;
     }
   };
-
+  const ClearData = () => {
+    setBase64('');
+    setnoidung('');
+    setlink('');
+    setChecked('');
+    setChecked1(0);
+    setdiadiem('');
+    setFileName('');
+  };
   return (
     <SafeAreaView style={styles.container}>
       <HeaderBack
@@ -1719,6 +1727,7 @@ const Chitiethosoxuly = props => {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
                                         if (
                                           tabledata.MC_TTHC_GV_IDMucDo === 2
                                         ) {
@@ -1749,8 +1758,12 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    Huytra();
-                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    if (MangQuyen[0] != 16) {
+                                      handleModalPress1();
+                                    } else {
+                                      Huytra();
+                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    }
                                   }}>
                                   <Text
                                     style={{color: '#ffffff', fontSize: 19}}>
@@ -2104,7 +2117,7 @@ const Chitiethosoxuly = props => {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
-
+                                        ClearData();
                                         if (checkedNNHS === true) {
                                           if (
                                             tabledata.MC_TTHC_GV_IDMucDo === 2
@@ -2150,8 +2163,12 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    Huytra();
-                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    if (MangQuyen[0] != 16) {
+                                      handleModalPress1();
+                                    } else {
+                                      Huytra();
+                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    }
                                   }}>
                                   <Text
                                     style={{color: '#ffffff', fontSize: 19}}>
@@ -2451,7 +2468,7 @@ const Chitiethosoxuly = props => {
                                         handleModalPress6();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
-
+                                        ClearData();
                                         if (checkedCBXL === true) {
                                           sendEmail2();
                                         }
@@ -2727,7 +2744,7 @@ const Chitiethosoxuly = props => {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
-
+                                        ClearData();
                                         //  getDataHoSo(idThuTuc);
                                         if (checkedTPDV === true) {
                                           sendEmail1();
@@ -3060,7 +3077,7 @@ const Chitiethosoxuly = props => {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
-
+                                        ClearData();
                                         if (checkedNNHS === true) {
                                           if (
                                             tabledata.MC_TTHC_GV_IDMucDo === 2
@@ -3099,8 +3116,12 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    Huytra();
-                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    if (MangQuyen[0] != 16) {
+                                      handleModalPress1();
+                                    } else {
+                                      Huytra();
+                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    }
                                   }}>
                                   <Text
                                     style={{color: '#ffffff', fontSize: 19}}>
@@ -3427,6 +3448,8 @@ const Chitiethosoxuly = props => {
                                       if (MangQuyen[0] != 16) {
                                         handleModalPress1();
                                       } else {
+                                        getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
                                         if (checkedNNHS === true) {
                                           if (
                                             tabledata.MC_TTHC_GV_IDMucDo === 2
@@ -3459,8 +3482,12 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    Huytra();
-                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    if (MangQuyen[0] != 16) {
+                                      handleModalPress1();
+                                    } else {
+                                      Huytra();
+                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                    }
                                   }}>
                                   <Text
                                     style={{color: '#ffffff', fontSize: 19}}>

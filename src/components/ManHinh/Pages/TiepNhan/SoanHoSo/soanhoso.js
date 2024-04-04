@@ -113,6 +113,15 @@ const Soanhoso = props => {
     }
   };
 
+  const ClearData = () => {
+    setemail('');
+    setsdt('');
+    setnd('');
+    setsl('');
+    setFileName('');
+    setBase64('');
+  };
+
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
@@ -167,7 +176,7 @@ const Soanhoso = props => {
         : '',
     };
 
-   // console.log(postdata);
+    // console.log(postdata);
     try {
       const response = await axios.post(apiPhucKhao, postdata, {
         headers: {
@@ -179,7 +188,7 @@ const Soanhoso = props => {
         handleModalPress();
       } else {
         if (response.status == 200) {
-          // handleModalPress1();
+          handleModalPress1();
         }
       }
 
@@ -203,17 +212,17 @@ const Soanhoso = props => {
         },
       });
       if (response.data.message === 'Bản ghi bị trùng.') {
-        handleModalPress();
+        //handleModalPress();
       } else {
         if (response.status == 200) {
-          handleModalPress1();
+          //handleModalPress1();
         }
       }
 
       if (response.status === 403) {
       }
       if (response.status === 400) {
-        Alert.alert('Lỗi 2');
+        /// Alert.alert('Lỗi 2');
       }
     } catch (error) {
       console.error(error);
@@ -746,16 +755,7 @@ const Soanhoso = props => {
 
       <View style={styles.footer}>
         <View style={[styles.buttonHuy, {marginLeft: 30}]}>
-          <TouchableOpacity
-            style={styles.touchableOpacity}
-            onPress={() => {
-              setemail('');
-              setsdt('');
-              setnd('');
-              setsl('');
-              setFileName('');
-              setBase64('');
-            }}>
+          <TouchableOpacity style={styles.touchableOpacity} onPress={ClearData}>
             <Text style={{color: 'black', fontSize: 19}}>Hủy</Text>
           </TouchableOpacity>
         </View>
@@ -783,6 +783,7 @@ const Soanhoso = props => {
                   handleModalPress5();
                 } else {
                   PostYeuCau2();
+                  ClearData();
                 }
               }
               // console.log(dataFile[1]);

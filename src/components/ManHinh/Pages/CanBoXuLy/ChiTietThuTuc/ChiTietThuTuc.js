@@ -58,11 +58,12 @@ const Chitiethosoxuly = props => {
     setOpenModal(false);
   };
   const [tabledata, setTableData] = useState([]);
-  const [YeuCauID, setYeuCauID] = useState(0);
+  const [YeuCauID, setYeuCauID] = useState('');
   const [TrangThaiSTT, setTrangThaiSTT] = useState(0);
   const [idThuTuc, setidThuTuc] = useState(props.route.params.IDGuiYeuCau);
   const [MangBuocHienHanh, setMangBuocHienHanh] = useState({});
   const [MangQuyTrinh, Setmangquytrinh] = useState([]);
+  const [IdTrangThai, setIDtrangthai] = useState('');
   const retry = async (func, maxAttempts = 3, delay = 2000, backoff = 2) => {
     let attempt = 1;
     while (attempt <= maxAttempts) {
@@ -100,12 +101,18 @@ const Chitiethosoxuly = props => {
       console.log('ID thủ tục: ' + idThuTuc);
 
       if (response.data.body[0].MC_TTHC_GV_TrangThai_STT === null) {
-        setTrangThaiSTT(0);
+        setTrangThaiSTT(0 + 1);
       } else {
         setTrangThaiSTT(response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1);
       }
-
+      setIDtrangthai(response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID);
       setYeuCauID(response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID);
+      console.log(
+        'ID gửi yêu cầu: ',
+        response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
+        ' STT: ',
+        response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1,
+      );
     };
     try {
       await retry(() => callApi(IDthutuc));
@@ -143,7 +150,8 @@ const Chitiethosoxuly = props => {
         },
       );
       setquytrinh(response.data.body);
-      //console.log("Data quy trinh:"+response.data.body);
+      console.log('Yeu Cau ID Quy Trinh: ', YeuCauID);
+      console.log('Data quy trinh:' + response.data.body);
     };
     try {
       await retry(callApi);
@@ -218,10 +226,9 @@ const Chitiethosoxuly = props => {
         },
       );
       const data = await response.data.body;
-      console.log(data);
+      console.log('DataQuyTrinh' + data);
       Setmangquytrinh(data);
-      //   console.log('data trạng thái hiện hành: '+
-      // await response.data.body[0]);
+
       console.log(data);
     };
     try {
@@ -271,7 +278,7 @@ const Chitiethosoxuly = props => {
     }
   };
   const [emailcbxl, setemailcbxl] = useState('');
-  const apigetemailcbxl = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_PhanQuyenTiepNhan/Load_CanBoXuLy_ByIDGoc?MC_TTHC_GV_PhanQuyen_IDTTHC=${idThuTuc}`;
+  const apigetemailcbxl = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_PhanQuyenTiepNhan/Load_CanBoXuLy_ByIDGoc?MC_TTHC_GV_PhanQuyen_IDTTHC=${YeuCauID}`;
   const getemailcbxl = async () => {
     const callApi = async () => {
       const response = await axios.get(apigetemailcbxl, {
@@ -283,8 +290,8 @@ const Chitiethosoxuly = props => {
       if (response.data.body.length === 0) {
         setemailcbxl('');
       } else {
-        console.log('Email CBXL: ' + response.body[0].QTPM_QLEMAIL_EmailUneti);
-        setemailcbxl(response.body[0].QTPM_QLEMAIL_EmailUneti);
+        console.log('Email CBXL: ' + response.data.body[0].QTPM_QLEMAIL_EmailUneti);
+        setemailcbxl(response.data.body[0].QTPM_QLEMAIL_EmailUneti);
       }
     };
     try {
@@ -297,6 +304,7 @@ const Chitiethosoxuly = props => {
   useEffect(() => {
     if (tabledata2 === 0) return;
     getDataTabble();
+    //  console.log('Mảng quyền: ', MangQuyen);
   }, [tabledata2]);
   const [dataquytrinh, setquytrinh] = useState([]);
   useEffect(() => {
@@ -304,14 +312,17 @@ const Chitiethosoxuly = props => {
   }, []);
   useEffect(() => {
     getDataHoSo(idThuTuc);
-    getemailcbxl();
   }, []);
+  useEffect(()=>{
+    getemailcbxl();
+  },[YeuCauID])
   useEffect(() => {
+    console.log('TestYeuCauID:', YeuCauID);
+    console.log('TestYeuCauID:', TrangThaiSTT);
     if (TrangThaiSTT === 0 || YeuCauID === 0) return;
     getDataQuyTrinh();
     getTrangThaiHienHanh(TrangThaiSTT);
   }, [TrangThaiSTT, YeuCauID]);
-
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
@@ -355,14 +366,6 @@ const Chitiethosoxuly = props => {
   const [link, setlink] = useState('');
   const [diadiem, setdiadiem] = useState('');
   const [checkstatuspost, setcheckstatuspost] = useState('');
-  useEffect(() => {
-    if (MangQuyen[0] === '16' || MangQuyen[0] === '24') {
-      setIsDisabled(!isDisabled);
-    }
-    if (MangQuyen[0] === '16' || MangQuyen[0] === '25') {
-      setIsDisabled1(!isDisabled1);
-    }
-  }, []);
   const [FileName, setFileName] = useState('');
   const [base64FileChoose, setBase64] = useState('');
   const readFileAsBase64 = async fileUri => {
@@ -698,6 +701,7 @@ const Chitiethosoxuly = props => {
       dulieu: base64FileChoose, //dữ liệu của file đó
       html: emailHtml,
     };
+    console.log('Data email cbnv: ', emailcbxl);
     try {
       const response = await axios.post(SendEmail, data, {
         headers: {
@@ -867,6 +871,7 @@ const Chitiethosoxuly = props => {
   };
   const handleCloseModal5 = () => {
     setShowModal5(false);
+    props.navigation.navigate('CBXL_DanhSachThuTuc');
   };
   const [showModal6, setShowModal6] = useState(false);
   const handleModalPress6 = () => {
@@ -1723,11 +1728,11 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 16) {
+                                      if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
-                                        ClearData();
+
                                         if (
                                           tabledata.MC_TTHC_GV_IDMucDo === 2
                                         ) {
@@ -1741,6 +1746,7 @@ const Chitiethosoxuly = props => {
                                             TEMPLATE_EMAIL_SUBJECT.RECEIVED,
                                           );
                                         }
+                                        ClearData();
                                       }
                                     }
                                   }}>
@@ -1758,7 +1764,7 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    if (MangQuyen[0] != 16) {
+                                    if (MangQuyen != 16) {
                                       handleModalPress1();
                                     } else {
                                       Huytra();
@@ -2113,7 +2119,7 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 16) {
+                                      if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
@@ -2178,8 +2184,8 @@ const Chitiethosoxuly = props => {
                               </View>
                             </View>
                           </View>
-                        ) : tabledata.MC_TTHC_GV_TrangThai_STT_TPD ===
-                          TrangThaiSTT ? (
+                        ) : TrangThaiSTT ===
+                          tabledata.MC_TTHC_GV_TrangThai_STT_TPD ? (
                           <View style={[styles.noidungtungbuoc, {height: 650}]}>
                             <Text
                               style={[
@@ -2461,19 +2467,21 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 24) {
+                                      if (MangQuyen != 24) {
                                         handleModalPress1();
-                                      }
-                                      if (checked === '') {
-                                        handleModalPress6();
                                       } else {
-                                        getTrangThaiHienHanh1(TrangThaiSTT);
-                                        ClearData();
-                                        if (checkedCBXL === true) {
-                                          sendEmail2();
-                                        }
-                                        if (checked === '2') {
-                                          sendEmail3();
+                                        if (checked === '') {
+                                          handleModalPress6();
+                                        } else {
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+
+                                          if (checkedCBXL === true) {
+                                            sendEmail2();
+                                          }
+                                          if (checked === '2') {
+                                            sendEmail3();
+                                          }
+                                          ClearData();
                                         }
                                       }
                                     }
@@ -2485,8 +2493,8 @@ const Chitiethosoxuly = props => {
                               </View>
                             </View>
                           </View>
-                        ) : tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ===
-                          TrangThaiSTT ? (
+                        ) : TrangThaiSTT ===
+                          tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ? (
                           <View style={[styles.noidungtungbuoc]}>
                             <Text
                               style={[
@@ -2740,7 +2748,7 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 25) {
+                                      if (MangQuyen != 25) {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
@@ -3073,7 +3081,7 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 16) {
+                                      if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
@@ -3093,6 +3101,7 @@ const Chitiethosoxuly = props => {
                                             );
                                           }
                                         }
+                                       // console.log("email cbxl: ",emailcbxl);
                                       }
                                     }
 
@@ -3445,7 +3454,7 @@ const Chitiethosoxuly = props => {
                                     if (noidung === '') {
                                       handleModalPress();
                                     } else {
-                                      if (MangQuyen[0] != 16) {
+                                      if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);

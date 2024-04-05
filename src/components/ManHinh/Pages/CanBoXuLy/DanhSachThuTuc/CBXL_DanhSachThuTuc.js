@@ -32,7 +32,7 @@ import {
   ThongTinGiangVien,
 } from '../../../../../api/GetThongTin/ThongTinGiangVien';
 export var IDthutuc;
-export var MangQuyen = [];
+export var MangQuyen = '';
 const Dieu_Kien_Da_Hoan_Thanh = 'Đã hoàn thành';
 
 const CBXL_DanhSachThuTuc = props => {
@@ -404,7 +404,7 @@ const CBXL_DanhSachThuTuc = props => {
   useEffect(() => {
     if (dataGiangVien.HT_GROUPUSER_ID) {
       setMangQuyen(dataGiangVien.HT_GROUPUSER_ID);
-      MangQuyen = dataGiangVien.HT_GROUPUSER_ID;
+      MangQuyen = dataGiangVien.HT_GROUPUSER_ID[0];
     }
     return () => {
       setMangQuyen([]);

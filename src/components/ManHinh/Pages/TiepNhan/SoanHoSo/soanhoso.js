@@ -93,8 +93,7 @@ const Soanhoso = props => {
       setdatafile(dataFile => {
         const newDataFile = [...dataFile];
         newDataFile[index] = {
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc:
-            TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc: TableData1.MC_TTHC_GV_ID,
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: 1,
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile:
             'data:' + res[0].type + ';base64,' + base64Content1,
@@ -137,9 +136,7 @@ const Soanhoso = props => {
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa: ThongTinGiangVien.ChuyenMon
         ? ThongTinGiangVien.ChuyenMon
         : '',
-      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID
-        ? TableData1.MC_TTHC_GV_GuiYeuCau_YeuCau_ID
-        : '',
+      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_ID,
       MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: nd ? nd : '',
       MC_TTHC_GV_GuiYeuCau_TrangThai_ID: TableData1.MC_TTHC_GV_IDMucDo
         ? TableData1.MC_TTHC_GV_IDMucDo
@@ -148,7 +145,7 @@ const Soanhoso = props => {
       MC_TTHC_GV_GuiYeuCau_NgayGui: moment
         .utc(moment(), 'DD/MM/YYYY')
         .toISOString(),
-      MC_TTHC_GV_GuiYeuCau_KetQua_SoLuong: sl ? sl : '',
+      MC_TTHC_GV_GuiYeuCau_KetQua_SoLuong: sl.toString() ? sl.toString() : '',
       MC_TTHC_GV_GuiYeuCau_DaNop: 'true',
       MC_TTHC_GV_GuiYeuCau_NgayHenTra: TableData1.MC_TTHC_GV_DateEditor
         ? TableData1.MC_TTHC_GV_DateEditor
@@ -160,7 +157,9 @@ const Soanhoso = props => {
         ? TableData1.MC_TTHC_GV_NoiTraKetQua
         : '',
       MC_TTHC_GV_GuiYeuCau_TraKetQua_TenFile: FileName[0] ? FileName[0] : '',
-      MC_TTHC_GV_GuiYeuCau_TraKetQua_DataFile: '',
+      MC_TTHC_GV_GuiYeuCau_TraKetQua_DataFile: base64Content
+        ? base64Content
+        : '',
       MC_TTHC_GV_GuiYeuCau_TrangThaiPheDuyetTruongPhong:
         TableData1.MC_TTHC_GV_IsTruongPhongPheDuyet
           ? TableData1.MC_TTHC_GV_IsTruongPhongPheDuyet
@@ -176,7 +175,6 @@ const Soanhoso = props => {
         : '',
     };
 
-    // console.log(postdata);
     try {
       const response = await axios.post(apiPhucKhao, postdata, {
         headers: {

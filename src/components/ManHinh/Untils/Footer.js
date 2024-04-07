@@ -24,11 +24,6 @@ const Footer = props => {
         backgroundColor: '#ffffff',
         width: getWidth,
       }}>
-      {/* <ModalThongBao
-        visible={showModal}
-        onClose={closeModal}
-        message="Chưa hoàn thành!"
-      /> */}
       <View
         style={{
           position: 'absolute',
@@ -62,8 +57,6 @@ const Footer = props => {
           }}>
           <View
             style={{
-              width: 20,
-              height: 20,
               borderRadius: 20,
               position: 'absolute',
               top: 7,
@@ -73,7 +66,7 @@ const Footer = props => {
               backgroundColor: 'red',
               zIndex: 1,
             }}>
-            <Text style={{color: '#ffffff', fontSize: 15}}>
+            <Text style={{color: '#ffffff', fontSize: 13, padding: 1.5}}>
               {soLuongThuTuc}
             </Text>
           </View>

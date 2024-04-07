@@ -80,8 +80,6 @@ const CBXL_DanhSachThuTuc = props => {
 
   //Lấy dữ liệu từ api in ra danh sách thủ tục
   const [dataThuTuc, setDataThuTuc] = useState([]);
-  // const apiGetDuLieuDanhSachThuTuc =
-  //   'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=MaThuTuc';
 
   const apiGetDuLieuDanhSachThuTuc =
     'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=&TuKhoaTimKiem=&PhongBan';
@@ -388,9 +386,18 @@ const CBXL_DanhSachThuTuc = props => {
   };
 
   //UseEffect lấy danh sách thủ tục, danh sách hồ sơ gửi lên
+  // useEffect(() => {
+  //   getMangDanhSachThuTuc();
+  //   getMangDanhSachHoSoGuiLen();
+  // }, [getTenDonVi, getTenLinhVuc]);
+
   useEffect(() => {
-    getMangDanhSachThuTuc();
-    getMangDanhSachHoSoGuiLen();
+    const interval = setInterval(() => {
+      getMangDanhSachThuTuc();
+      getMangDanhSachHoSoGuiLen();
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [getTenDonVi, getTenLinhVuc]);
 
   //UseEffect lấy thông tin của giảng viên
@@ -425,7 +432,11 @@ const CBXL_DanhSachThuTuc = props => {
   }, [mangQuyen]);
 
   useEffect(() => {
-    getSoLuong();
+    const interval = setInterval(() => {
+      getSoLuong();
+    }, 1500);
+
+    return () => clearInterval(interval);
   }, []);
 
   //Modal thông tin hồ sơ

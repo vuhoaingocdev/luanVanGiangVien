@@ -93,7 +93,11 @@ const TheoDoiDeNghi = props => {
   };
 
   useEffect(() => {
-    getMangDanhSachHoSoDaGui();
+    const interval = setInterval(() => {
+      getMangDanhSachHoSoDaGui();
+    }, 1500);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

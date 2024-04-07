@@ -124,7 +124,11 @@ const Chitietthutuc = props => {
   };
 
   useEffect(() => {
-    getSoLuong();
+    const interval = setInterval(() => {
+      getSoLuong();
+    }, 1500);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

@@ -109,7 +109,6 @@ export const sendEmailTTHCGV_MucDo2 = async (
   dataUserSuggest, //
   dataUserHandle, //
   contentReply,
-  toEmail,
   timeWork,
   locationWork,
 

@@ -238,9 +238,13 @@ const ChiTietHoSo = props => {
   };
 
   useEffect(() => {
-    getSoLuong();
-  }, []);
+    const interval = setInterval(() => {
+      getSoLuong();
+    }, 1500);
 
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
     <SafeAreaView style={styles.container}>
       <HeaderBack

@@ -344,7 +344,11 @@ const Soanhoso = props => {
   };
 
   useEffect(() => {
-    getSoLuong();
+    const interval = setInterval(() => {
+      getSoLuong();
+    }, 1500);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

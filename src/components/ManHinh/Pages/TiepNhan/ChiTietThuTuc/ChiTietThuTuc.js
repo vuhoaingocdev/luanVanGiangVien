@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  Platform
 } from 'react-native';
 
 import CheckBox from 'react-native-check-box';
@@ -15,7 +16,10 @@ import {token} from '../../../../DangNhap/dangNhap';
 import {DataTable} from 'react-native-paper';
 import HeaderBack from '../../../Untils/HeaderBack';
 import Footer from '../../../Untils/Footer';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
 import {maGiangVien} from '../../../../DangNhap/dangNhap';
+import ModalThongBao from '../../../Untils/ModalThongBao';
 const getWidth = Dimensions.get('window').width;
 const getHeight = Dimensions.get('window').height;
 export var TableData1 = [];
@@ -122,7 +126,55 @@ const Chitietthutuc = props => {
       console.error('API call failed after multiple attempts:', error);
     }
   };
+  const saveBufferToFile = async (bufferData, fileName, directory) => {
+    try {
+      // Tạo thư mục nếu chưa tồn tại
+      await RNFS.mkdir(directory, {NSURLIsExcludedFromBackupKey: true});
 
+      // Kết hợp đường dẫn thư mục và tên tệp
+      const filePath = `${directory}/${fileName}`;
+
+      // Kiểm tra xem tệp đã tồn tại chưa
+      const fileExists = await RNFS.exists(filePath);
+      if (fileExists) {
+        console.log('Tệp đã tồn tại:', filePath);
+        handleModalPress13();
+        return filePath; // Trả về đường dẫn của tệp đã tồn tại
+      }
+
+      // Ghi dữ liệu buffer vào tệp
+      await RNFS.writeFile(filePath, bufferData, 'base64');
+
+      console.log('Ghi tệp thành công:', filePath);
+      handleModalPress11();
+      return filePath; // Trả về đường dẫn của tệp đã ghi
+    } catch (error) {
+      handleModalPress12();
+      console.error('Lỗi khi ghi tệp:', error);
+      throw error;
+    }
+  };
+  const [showModal11, setShowModal11] = useState(false);
+  const handleModalPress11 = () => {
+    setShowModal11(true);
+  };
+  const handleCloseModal11 = () => {
+    setShowModal11(false);
+  };
+  const [showModal12, setShowModal12] = useState(false);
+  const handleModalPress12 = () => {
+    setShowModal12(true);
+  };
+  const handleCloseModal12 = () => {
+    setShowModal12(false);
+  };
+  const [showModal13, setShowModal13] = useState(false);
+  const handleModalPress13 = () => {
+    setShowModal13(true);
+  };
+  const handleCloseModal13 = () => {
+    setShowModal13(false);
+  };
   useEffect(() => {
     const interval = setInterval(() => {
       getSoLuong();
@@ -142,6 +194,21 @@ const Chitietthutuc = props => {
         onPress={() => {
           props.navigation.goBack();
         }}
+      />
+      <ModalThongBao
+        visible={showModal11}
+        onClose={handleCloseModal11}
+        message="Tải xuống tệp thành công!!!"
+      />
+      <ModalThongBao
+        visible={showModal12}
+        onClose={handleCloseModal12}
+        message="Quá trình tải tệp lỗi.Hãy thử lại!!!"
+      />
+      <ModalThongBao
+        visible={showModal13}
+        onClose={handleCloseModal13}
+        message="Tệp đã tồn tại!!!"
       />
       <View style={styles.body}>
         <ScrollView>
@@ -346,9 +413,30 @@ const Chitietthutuc = props => {
                           flex: 0.2,
                         },
                       ]}>
-                      <Text style={styles.TextNormal}>
-                        Xem mẫu hướng dẫn: {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
+                        <View style={{flexDirection:'column'}}>
+                        <Text style={styles.TextNormal}>
+                        Xem mẫu hướng dẫn:
                       </Text>
+                      <TouchableOpacity onPress={()=>{
+                                let bufferdata =td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
+                                let buffer = Buffer.from(bufferdata);
+                                let base64content = buffer.toString('base64');
+                                const directory =
+                                Platform.OS === 'android'
+                                  ? '/storage/emulated/0/Download'
+                                  : RNFS.DocumentDirectoryPath;
+                                saveBufferToFile(
+                                base64content,
+                                td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
+                                directory,
+                                );
+                      }}>
+                      <Text style={styles.TextNormal}>
+                       {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
+                      </Text>
+                      </TouchableOpacity>
+                        </View>
+                     
                     </DataTable.Cell>
 
                     <DataTable.Cell
@@ -411,7 +499,7 @@ const Chitietthutuc = props => {
             <View style={{width: '60%', flexDirection: 'row'}}>
               <Text style={styles.TextBold}>: </Text>
               <Text style={styles.TextNormal}>
-                {tabledata.MC_TTHC_GV_SoBoHoSo} bộ
+                {tabledata.MC_TTHC_GV_SoBoHoSo?tabledata.MC_TTHC_GV_SoBoHoSo:'1'} bộ
               </Text>
             </View>
           </View>
@@ -423,7 +511,7 @@ const Chitietthutuc = props => {
             <View style={{width: '56%', flexDirection: 'row'}}>
               <Text style={styles.TextBold}>: </Text>
               <Text style={[styles.TextNormal, {textAlign: 'left'}]}>
-                <Text>2 ngày kể từ khi nhận đủ hồ sơ hợp lệ</Text>
+                <Text>{tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet?tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet:'2'} ngày kể từ khi nhận đủ hồ sơ hợp lệ</Text>
               </Text>
             </View>
           </View>
@@ -631,17 +719,6 @@ const Chitietthutuc = props => {
                 ))}
               </DataTable>
             </ScrollView>
-          </View>
-          <View style={[styles.viewngang, {marginTop: 20}]}>
-            <View style={{width: '50%'}}>
-              <Text style={styles.TextBold}>Phí, lệ phí</Text>
-            </View>
-            <View style={{width: '50%', flexDirection: 'row'}}>
-              <Text style={styles.TextBold}>: </Text>
-              <Text style={[styles.TextNormal, {textAlign: 'left'}]}>
-                Không tính phí
-              </Text>
-            </View>
           </View>
           <View style={styles.viewngang}>
             <View style={{width: '50%'}}>

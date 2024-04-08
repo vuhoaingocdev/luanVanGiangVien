@@ -15,7 +15,7 @@ import {
   Platform,
 } from 'react-native';
 import HeaderBack from '../../../Untils/HeaderBack';
-import {IDthutuc, MangQuyen} from '../DanhSachThuTuc/CBXL_DanhSachThuTuc';
+import {idYeuCauGui, MangQuyen} from '../DanhSachThuTuc/CBXL_DanhSachThuTuc';
 import DatePicker from 'react-native-date-picker';
 import {Button, DataTable, TextInput} from 'react-native-paper';
 import {RadioButton} from 'react-native-paper';
@@ -58,9 +58,11 @@ const Chitiethosoxuly = props => {
     setOpenModal(false);
   };
   const [tabledata, setTableData] = useState([]);
-  const [YeuCauID, setYeuCauID] = useState('');
+  const [idthutucgui, setidthutucgui] = useState('');
   const [TrangThaiSTT, setTrangThaiSTT] = useState(0);
-  const [idThuTuc, setidThuTuc] = useState(props.route.params.IDGuiYeuCau);
+  const [idYeuCauGui, setidYeuCauGui] = useState(
+    props.route.params.IDGuiYeuCau,
+  );
   const [MangBuocHienHanh, setMangBuocHienHanh] = useState({});
   const [MangQuyTrinh, Setmangquytrinh] = useState([]);
   const [IdTrangThai, setIDtrangthai] = useState('');
@@ -84,10 +86,10 @@ const Chitiethosoxuly = props => {
     }
   };
   var getAPI1 = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_R_Para_File`;
-  const getDataHoSo = async IDthutuc => {
-    const callApi = async IDthutuc => {
+  const getDataHoSo = async IDyeucau => {
+    const callApi = async IDyeucau => {
       const response = await axios.get(getAPI1, {
-        params: {MC_TTHC_GV_GuiYeuCau_ID: IDthutuc},
+        params: {MC_TTHC_GV_GuiYeuCau_ID: IDyeucau},
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -98,30 +100,34 @@ const Chitiethosoxuly = props => {
       console.log(
         'Trạng thái id:' + response.data.body[0].MC_TTHC_GV_TrangThai_STT,
       );
-      console.log('ID thủ tục: ' + idThuTuc);
-
-      if (response.data.body[0].MC_TTHC_GV_TrangThai_STT === null) {
-        setTrangThaiSTT(0 + 1);
+      console.log('ID lần gửi yêu cầu: ' + idYeuCauGui);
+      if (response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID === -1) {
+        setTrangThaiSTT(0);
       } else {
-        setTrangThaiSTT(response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1);
+        if (response.data.body[0].MC_TTHC_GV_TrangThai_STT === null) {
+          setTrangThaiSTT(0 + 1);
+        } else {
+          setTrangThaiSTT(response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1);
+        }
       }
+
       setIDtrangthai(response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID);
-      setYeuCauID(response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID);
+      setidthutucgui(response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID);
       console.log(
-        'ID gửi yêu cầu: ',
+        'ID thủ tục gửi lên: ',
         response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
         ' STT: ',
         response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1,
       );
     };
     try {
-      await retry(() => callApi(IDthutuc));
+      await retry(() => callApi(IDyeucau));
     } catch (error) {
       console.error(error + 'Getdatahoso');
     }
   };
   const [tabledata2, setTableData2] = useState([]);
-  var getAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_ThanhPhanHoSoTiepNhan/GuiYeuCau_Load_ByIDGuiYeuCau?MC_TTHC_GV_GuiYeuCau_ID=${idThuTuc}`;
+  var getAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_ThanhPhanHoSoTiepNhan/GuiYeuCau_Load_ByIDGuiYeuCau?MC_TTHC_GV_GuiYeuCau_ID=${idYeuCauGui}`;
   const getDataTabble = async () => {
     const callApi = async () => {
       const response = await axios.get(getAPI, {
@@ -141,7 +147,7 @@ const Chitiethosoxuly = props => {
   const getDataQuyTrinh = async () => {
     const callApi = async () => {
       const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_Load_ByIDGoc?MC_TTHC_GV_IDTTHC=${YeuCauID}`,
+        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_Load_ByIDGoc?MC_TTHC_GV_IDTTHC=${idthutucgui}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -150,7 +156,7 @@ const Chitiethosoxuly = props => {
         },
       );
       setquytrinh(response.data.body);
-      console.log('Yeu Cau ID Quy Trinh: ', YeuCauID);
+      console.log('Yeu Cau ID Quy Trinh: ', idthutucgui);
       console.log('Data quy trinh:' + response.data.body);
     };
     try {
@@ -163,7 +169,7 @@ const Chitiethosoxuly = props => {
   const getTrangThaiHienHanh = async TrangThaiSTT => {
     const callApi = async () => {
       const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${YeuCauID}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
+        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${idthutucgui}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -188,7 +194,7 @@ const Chitiethosoxuly = props => {
     }
     const callApi = async () => {
       const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${YeuCauID}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
+        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${idthutucgui}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -206,7 +212,7 @@ const Chitiethosoxuly = props => {
         // handleModalPress11();
         setcheckstatuspost('1');
       }
-      await getDataHoSo(idThuTuc);
+      await getDataHoSo(idYeuCauGui);
     };
     try {
       await retry(callApi);
@@ -217,7 +223,7 @@ const Chitiethosoxuly = props => {
   const getQuytrinhXuly = async () => {
     const callApi = async () => {
       const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_CBNV_TheoDoi_QuyTrinhXuLy_Load_Para?MC_TTHC_GV_GuiYeuCau_ID=${idThuTuc}`,
+        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_CBNV_TheoDoi_QuyTrinhXuLy_Load_Para?MC_TTHC_GV_GuiYeuCau_ID=${idYeuCauGui}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -278,7 +284,7 @@ const Chitiethosoxuly = props => {
     }
   };
   const [emailcbxl, setemailcbxl] = useState('');
-  const apigetemailcbxl = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_PhanQuyenTiepNhan/Load_CanBoXuLy_ByIDGoc?MC_TTHC_GV_PhanQuyen_IDTTHC=${YeuCauID}`;
+  const apigetemailcbxl = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_PhanQuyenTiepNhan/Load_CanBoXuLy_ByIDGoc?MC_TTHC_GV_PhanQuyen_IDTTHC=${idthutucgui}`;
   const getemailcbxl = async () => {
     const callApi = async () => {
       const response = await axios.get(apigetemailcbxl, {
@@ -290,7 +296,9 @@ const Chitiethosoxuly = props => {
       if (response.data.body.length === 0) {
         setemailcbxl('');
       } else {
-        console.log('Email CBXL: ' + response.data.body[0].QTPM_QLEMAIL_EmailUneti);
+        console.log(
+          'Email CBXL: ' + response.data.body[0].QTPM_QLEMAIL_EmailUneti,
+        );
         setemailcbxl(response.data.body[0].QTPM_QLEMAIL_EmailUneti);
       }
     };
@@ -311,26 +319,26 @@ const Chitiethosoxuly = props => {
     getQuytrinhXuly();
   }, []);
   useEffect(() => {
-    getDataHoSo(idThuTuc);
+    getDataHoSo(idYeuCauGui);
   }, []);
-  useEffect(()=>{
-    getemailcbxl();
-  },[YeuCauID])
   useEffect(() => {
-    console.log('TestYeuCauID:', YeuCauID);
-    console.log('TestYeuCauID:', TrangThaiSTT);
-    if (TrangThaiSTT === 0 || YeuCauID === 0) return;
+    getemailcbxl();
+  }, [idthutucgui]);
+  useEffect(() => {
+    console.log('Testidthutucgui:', idthutucgui);
+    console.log('Testidthutucgui:', TrangThaiSTT);
+    if (TrangThaiSTT === null || idthutucgui === 0) return;
     getDataQuyTrinh();
     getTrangThaiHienHanh(TrangThaiSTT);
-  }, [TrangThaiSTT, YeuCauID]);
+  }, [TrangThaiSTT, idthutucgui]);
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
   useEffect(() => {
-    if (YeuCauID !== '' || getTrangThai1 !== '') {
-      getChiTietTiepNhanHoSo(idThuTuc, getTrangThai1);
+    if (idthutucgui !== '' || getTrangThai1 !== '') {
+      getChiTietTiepNhanHoSo(idYeuCauGui, getTrangThai1);
     }
-  }, [idThuTuc, getTrangThai1]);
+  }, [idYeuCauGui, getTrangThai1]);
   useEffect(() => {
     if (!isSecondViewVisible) {
       setFirstViewHeight(20); // Reset height if second view is visible
@@ -358,6 +366,7 @@ const Chitiethosoxuly = props => {
   const [checkedNNHS, setCheckedNNHS] = useState(true);
   const [checkedCBXL, setCheckedCBXL] = useState(true);
   const [checkedTPDV, setCheckedTPDV] = useState(true);
+  const [checkedBGH, setCheckedBGH] = useState(true);
   const [checkboxColor, setCheckboxColor] = useState('#245d7c');
   const [checkboxUncheckedColor, setCheckboxUncheckedColor] = useState('gray');
   const [isDisabled, setIsDisabled] = useState(false);
@@ -447,7 +456,7 @@ const Chitiethosoxuly = props => {
   var PutAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Edit_Para`;
   const PostYeuCau = async ({TrangThai, TenTrangThai}) => {
     var postdata = {
-      MC_TTHC_GV_GuiYeuCau_ID: idThuTuc ? idThuTuc : '',
+      MC_TTHC_GV_GuiYeuCau_ID: idYeuCauGui ? idYeuCauGui : '',
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu:
         tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu
           ? tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu
@@ -464,7 +473,7 @@ const Chitiethosoxuly = props => {
         tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa
           ? tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa
           : '',
-      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: YeuCauID ? YeuCauID : '',
+      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: idthutucgui ? idthutucgui : '',
       MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: tabledata
         ? tabledata.MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu
         : '',
@@ -503,6 +512,58 @@ const Chitiethosoxuly = props => {
           'Content-Type': 'application/json',
         },
       });
+      if (response.status === 200) {
+        handleModalPress2();
+        if (TrangThaiSTT === 1) {
+          if (checkedNNHS === true) {
+            if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+              senEmailMD2();
+            } else {
+              sendEmail(TEMPLATE_EMAIL_SUBJECT.RECEIVED);
+            }
+          }
+        } else if (TrangThaiSTT === 2) {
+          if (checkedNNHS == true) {
+            if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+              senEmailMD2();
+            } else {
+              sendEmail(TEMPLATE_EMAIL_SUBJECT.PENDING);
+            }
+          }
+          if (tabledata.MC_TTHC_GV_IDMucDo === 3) {
+            if (checkedTPDV === true) {
+              sendEmail1();
+            }
+          }
+        } else if (TrangThaiSTT === tabledata.MC_TTHC_GV_TrangThai_STT_TPD) {
+          if (checkedCBXL == true) {
+            sendEmail2();
+          }
+          if (tabledata.MC_TTHC_GV_TrangThai_STT_BGHD !== null) {
+            if (checked === '2') {
+              sendEmail3();
+            }
+          }
+        } else if (TrangThaiSTT === tabledata.MC_TTHC_GV_TrangThai_STT_BGHD) {
+          if (checkedTPDV === true) {
+            sendEmail1();
+          }
+          if (checkedCBXL === true) {
+            sendEmail2();
+          }
+        } else if (
+          TrangThaiSTT === tabledata.MC_TTHC_GV_TrangThai_STTMAX ||
+          TrangThaiSTT === tabledata.MC_TTHC_GV_TrangThai_STTMAX - 1
+        ) {
+          if (checkedNNHS === true) {
+            if (tabledata.MC_TTHC_GV_IDMucDo !== 4) {
+              senEmailMD2();
+            } 
+          }
+        }
+      }
+      if (response.status === 400) {
+      }
       return response.status;
     } catch (error) {
       console.error(error);
@@ -511,7 +572,7 @@ const Chitiethosoxuly = props => {
   var PutAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Edit_Para`;
   const Huytra = async () => {
     var postdata = {
-      MC_TTHC_GV_GuiYeuCau_ID: idThuTuc,
+      MC_TTHC_GV_GuiYeuCau_ID: idYeuCauGui,
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu:
         tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu,
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_Email:
@@ -520,7 +581,7 @@ const Chitiethosoxuly = props => {
         tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_SDT,
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa:
         tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_Khoa,
-      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: YeuCauID,
+      MC_TTHC_GV_GuiYeuCau_YeuCau_ID: idthutucgui,
       MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu:
         tabledata.MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu,
       MC_TTHC_GV_GuiYeuCau_TrangThai_ID: -1,
@@ -601,7 +662,6 @@ const Chitiethosoxuly = props => {
         Alert.alert('Thông báo', 'Yêu cầu đã được gửi trước đó');
       } else {
         if (response.status == 200) {
-          handleModalPress2();
         }
       }
 
@@ -633,7 +693,8 @@ const Chitiethosoxuly = props => {
       );
 
     const data = {
-      to: tabledata.MC_TTHC_GV_EmailTruongPhongPheDuyet, // Email muốn gửi đến
+      to: 'vuson20022020@gmail.com',
+      //tabledata.MC_TTHC_GV_EmailTruongPhongPheDuyet, // Email muốn gửi đến
       subject: subjectEmail, // contentTitle // Tiêu đề email
       text: contentEmail, // Nội dung email
       tenfile: FileName, //ten file đó
@@ -653,7 +714,6 @@ const Chitiethosoxuly = props => {
         Alert.alert('Thông báo', 'Yêu cầu đã được gửi trước đó');
       } else {
         if (response.status == 200) {
-          handleModalPress2();
         }
       }
       if (response.status === 400) {
@@ -669,10 +729,10 @@ const Chitiethosoxuly = props => {
   };
   const sendEmail2 = async () => {
     let contentSubject = '';
-    if (checked === '0') {
+    if (checked === '0' || checked1 === '0') {
       contentSubject = 'Phê duyệt';
     }
-    if (checked === '1') {
+    if (checked === '1' || checked1 === '1') {
       contentSubject = 'Không phê duyệt';
     }
     if (checked === '2') {
@@ -694,7 +754,8 @@ const Chitiethosoxuly = props => {
       );
 
     const data = {
-      to: emailcbxl ? emailcbxl : '', //Email muốn gửi đến
+      to: 'vuson20022020@gmail.com',
+      //emailcbxl ? emailcbxl : '', //Email muốn gửi đến
       subject: subjectEmail, // contentTitle //Tiêu đề email
       text: noiDungLyDo, //Nội dung email
       tenfile: FileName, //ten file đó
@@ -714,7 +775,6 @@ const Chitiethosoxuly = props => {
         Alert.alert('Thông báo', 'Yêu cầu đã được gửi trước đó');
       } else {
         if (response.status == 200) {
-          handleModalPress2();
         }
       }
       if (response.status === 400) {
@@ -746,7 +806,8 @@ const Chitiethosoxuly = props => {
       );
 
     const data = {
-      to: tabledata.MC_TTHC_GV_EmailBGHPheDuyet, //Email muốn gửi đến
+      to: 'vuson20022020@gmail.com',
+      //tabledata.MC_TTHC_GV_EmailBGHPheDuyet, //Email muốn gửi đến
       subject: subjectEmail, // contentTitle //Tiêu đề email
       text: noiDungTrinhDuyet, //Nội dung email
       tenfile: FileName, //ten file đó
@@ -765,7 +826,6 @@ const Chitiethosoxuly = props => {
         Alert.alert('Thông báo', 'Yêu cầu đã được gửi trước đó');
       } else {
         if (response.status == 200) {
-          handleModalPress2();
         }
       }
       if (response.status === 403) {
@@ -817,7 +877,6 @@ const Chitiethosoxuly = props => {
         Alert.alert('Thông báo', 'Yêu cầu đã được gửi trước đó');
       } else {
         if (response.status == 200) {
-          handleModalPress2();
         }
       }
       if (response.status === 403) {
@@ -922,6 +981,13 @@ const Chitiethosoxuly = props => {
   const handleCloseModal12 = () => {
     setShowModal12(false);
   };
+  const [showModal13, setShowModal13] = useState(false);
+  const handleModalPress13 = () => {
+    setShowModal13(true);
+  };
+  const handleCloseModal13 = () => {
+    setShowModal13(false);
+  };
   const saveBufferToFile = async (bufferData, fileName, directory) => {
     try {
       // Tạo thư mục nếu chưa tồn tại
@@ -934,6 +1000,7 @@ const Chitiethosoxuly = props => {
       const fileExists = await RNFS.exists(filePath);
       if (fileExists) {
         console.log('Tệp đã tồn tại:', filePath);
+        handleModalPress13();
         return filePath; // Trả về đường dẫn của tệp đã tồn tại
       }
 
@@ -1031,6 +1098,11 @@ const Chitiethosoxuly = props => {
         onClose={handleCloseModal12}
         message="Quá trình tải tệp lỗi.Hãy thử lại!!!"
       />
+      <ModalThongBao
+        visible={showModal13}
+        onClose={handleCloseModal13}
+        message="Tệp đã tồn tại!!!"
+      />
       <ScrollView>
         <View>
           <View style={styles.tieudelon}>
@@ -1068,7 +1140,9 @@ const Chitiethosoxuly = props => {
                       styles.TextNormal,
                       {textAlign: 'left', marginLeft: 40},
                     ]}>
-                    {tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu}
+                    {tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu
+                      ? tabledata.MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu
+                      : ''}
                   </Text>
                 </View>
               </View>
@@ -1303,8 +1377,6 @@ const Chitiethosoxuly = props => {
                               ]}>
                               <TouchableOpacity
                                 onPress={() => {
-                                  // handleDownloadFile(td);
-                                  //console.log(base64Content);
                                   let bufferdata =
                                     td
                                       .MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile
@@ -1399,6 +1471,14 @@ const Chitiethosoxuly = props => {
                         </Text>
                       </View>
                     )}
+                    {TrangThaiSTT === 0 ? (
+                      <View style={[styles.tieudebuoc1]}>
+                        <Text style={styles.texttieudebuoc1}>
+                          Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
+                          {td.MC_TTHC_GV_TrangThai_TenTrangThai}
+                        </Text>
+                      </View>
+                    ) : null}
                   </View>
 
                   {MangBuocHienHanh != null ? (
@@ -1416,7 +1496,9 @@ const Chitiethosoxuly = props => {
                             marginLeft: 33,
                           }}
                         />
-                        {TrangThaiSTT === 1 ? (
+                        {IdTrangThai === -1 ? (
+                          <View></View>
+                        ) : TrangThaiSTT === 1 ? (
                           <View style={[styles.noidungtungbuoc]}>
                             <Text
                               style={[
@@ -1731,22 +1813,19 @@ const Chitiethosoxuly = props => {
                                       if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
-                                        getTrangThaiHienHanh1(TrangThaiSTT);
-
                                         if (
                                           tabledata.MC_TTHC_GV_IDMucDo === 2
                                         ) {
                                           if (diadiem === '') {
                                             handleModalPress4();
                                           } else {
-                                            senEmailMD2();
+                                            getTrangThaiHienHanh1(TrangThaiSTT);
+                                            ClearData();
                                           }
                                         } else {
-                                          sendEmail(
-                                            TEMPLATE_EMAIL_SUBJECT.RECEIVED,
-                                          );
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+                                          ClearData();
                                         }
-                                        ClearData();
                                       }
                                     }
                                   }}>
@@ -2122,35 +2201,18 @@ const Chitiethosoxuly = props => {
                                       if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
-                                        getTrangThaiHienHanh1(TrangThaiSTT);
-                                        ClearData();
-                                        if (checkedNNHS === true) {
-                                          if (
-                                            tabledata.MC_TTHC_GV_IDMucDo === 2
-                                          ) {
-                                            if (diadiem === '') {
-                                              handleModalPress4();
-                                            } else {
-                                              senEmailMD2();
-                                            }
+                                        if (
+                                          tabledata.MC_TTHC_GV_IDMucDo === 2
+                                        ) {
+                                          if (diadiem === '') {
+                                            handleModalPress4();
                                           } else {
-                                            sendEmail(
-                                              TEMPLATE_EMAIL_SUBJECT.PENDING,
-                                            );
-                                            sendEmail1();
+                                            getTrangThaiHienHanh1(TrangThaiSTT);
+                                            ClearData();
                                           }
                                         } else {
-                                          if (
-                                            tabledata.MC_TTHC_GV_IDMucDo === 2
-                                          ) {
-                                            if (diadiem === '') {
-                                              handleModalPress4();
-                                            } else {
-                                              senEmailMD2();
-                                            }
-                                          } else {
-                                            sendEmail1();
-                                          }
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+                                          ClearData();
                                         }
                                       }
                                     }
@@ -2169,7 +2231,7 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    if (MangQuyen[0] != 16) {
+                                    if (MangQuyen != 16) {
                                       handleModalPress1();
                                     } else {
                                       Huytra();
@@ -2201,39 +2263,104 @@ const Chitiethosoxuly = props => {
                               ]}>
                               Gửi email:
                             </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                width: '90%',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                marginLeft: 15,
-                                marginTop: 5,
-                              }}>
-                              <View style={{flexDirection: 'row'}}>
-                                <CheckBox
-                                  value={checkedCBXL}
-                                  onValueChange={() => {
-                                    setCheckedCBXL(!checkedCBXL);
-                                  }}
-                                  tintColors={{
-                                    true: checkboxColor,
-                                    false: checkboxUncheckedColor,
-                                  }}
-                                />
-                                <Text
-                                  style={[
-                                    styles.TextNormal,
-                                    {
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      fontSize: 13,
-                                    },
-                                  ]}>
-                                  Cán bộ xử lý
-                                </Text>
+
+                            {tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ===
+                            null ? (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  width: '90%',
+                                  borderWidth: 1,
+                                  borderRadius: 5,
+                                  marginLeft: 15,
+                                  marginTop: 5,
+                                }}>
+                                <View style={{flexDirection: 'row'}}>
+                                  <CheckBox
+                                    value={checkedCBXL}
+                                    onValueChange={() => {
+                                      setCheckedCBXL(!checkedCBXL);
+                                    }}
+                                    tintColors={{
+                                      true: checkboxColor,
+                                      false: checkboxUncheckedColor,
+                                    }}
+                                  />
+                                  <Text
+                                    style={[
+                                      styles.TextNormal,
+                                      {
+                                        alignItems: 'center',
+                                        marginTop: 7,
+                                        fontSize: 13,
+                                      },
+                                    ]}>
+                                    Cán bộ xử lý
+                                  </Text>
+                                </View>
                               </View>
-                            </View>
+                            ) : (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  width: '90%',
+                                  borderWidth: 1,
+                                  borderRadius: 5,
+                                  marginLeft: 15,
+                                  marginTop: 5,
+                                }}>
+                                <View style={{flexDirection: 'row'}}>
+                                  <CheckBox
+                                    value={checkedCBXL}
+                                    onValueChange={() => {
+                                      setCheckedCBXL(!checkedCBXL);
+                                    }}
+                                    tintColors={{
+                                      true: checkboxColor,
+                                      false: checkboxUncheckedColor,
+                                    }}
+                                  />
+                                  <Text
+                                    style={[
+                                      styles.TextNormal,
+                                      {
+                                        alignItems: 'center',
+                                        marginTop: 7,
+                                        fontSize: 13,
+                                      },
+                                    ]}>
+                                    Cán bộ xử lý
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    marginLeft: 70,
+                                  }}>
+                                  <CheckBox
+                                    value={checkedBGH}
+                                    onValueChange={() => {
+                                      setCheckedBGH(!checkedBGH);
+                                    }}
+                                    tintColors={{
+                                      true: checkboxColor,
+                                      false: checkboxUncheckedColor,
+                                    }}
+                                  />
+                                  <Text
+                                    style={[
+                                      styles.TextNormal,
+                                      {
+                                        alignItems: 'center',
+                                        marginTop: 7,
+                                        fontSize: 13,
+                                      },
+                                    ]}>
+                                    Ban giám hiệu
+                                  </Text>
+                                </View>
+                              </View>
+                            )}
 
                             <RadioButton.Group
                               onValueChange={newValue => setChecked(newValue)}
@@ -2474,13 +2601,6 @@ const Chitiethosoxuly = props => {
                                           handleModalPress6();
                                         } else {
                                           getTrangThaiHienHanh1(TrangThaiSTT);
-
-                                          if (checkedCBXL === true) {
-                                            sendEmail2();
-                                          }
-                                          if (checked === '2') {
-                                            sendEmail3();
-                                          }
                                           ClearData();
                                         }
                                       }
@@ -2521,9 +2641,32 @@ const Chitiethosoxuly = props => {
                               }}>
                               <View style={{flexDirection: 'row'}}>
                                 <CheckBox
+                                  value={checkedCBXL}
+                                  onValueChange={() => {
+                                    setCheckedCBXL(!checkedCBXL);
+                                  }}
+                                  tintColors={{
+                                    true: checkboxColor,
+                                    false: checkboxUncheckedColor,
+                                  }}
+                                />
+                                <Text
+                                  style={{
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    textAlign: 'center',
+                                    color: 'black',
+                                    fontSize: 13,
+                                  }}>
+                                  Cán bộ xử lý
+                                </Text>
+                              </View>
+                              <View
+                                style={{flexDirection: 'row', marginLeft: 50}}>
+                                <CheckBox
                                   value={checkedTPDV}
                                   onValueChange={() => {
-                                    setCheckedCBXL(!checkedTPDV);
+                                    setCheckedTPDV(!checkedTPDV);
                                   }}
                                   tintColors={{
                                     true: checkboxColor,
@@ -2685,7 +2828,6 @@ const Chitiethosoxuly = props => {
                                     color: 'black',
                                     fontSize: 16,
                                     textAlign: 'center',
-                                    marginTop: 16,
                                   }}>
                                   Chọn tệp
                                 </Text>
@@ -2753,10 +2895,6 @@ const Chitiethosoxuly = props => {
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
                                         ClearData();
-                                        //  getDataHoSo(idThuTuc);
-                                        if (checkedTPDV === true) {
-                                          sendEmail1();
-                                        }
                                       }
                                     }
                                   }}>
@@ -3084,24 +3222,21 @@ const Chitiethosoxuly = props => {
                                       if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
-                                        getTrangThaiHienHanh1(TrangThaiSTT);
-                                        ClearData();
-                                        if (checkedNNHS === true) {
-                                          if (
-                                            tabledata.MC_TTHC_GV_IDMucDo === 2
-                                          ) {
-                                            if (diadiem === '') {
-                                              handleModalPress4();
-                                            } else {
-                                              senEmailMD2();
-                                            }
+                                        if (
+                                          tabledata.MC_TTHC_GV_IDMucDo === 2
+                                        ) {
+                                          if (diadiem === '') {
+                                            handleModalPress4();
                                           } else {
-                                            sendEmail(
-                                              TEMPLATE_EMAIL_SUBJECT.SUCCESS,
-                                            );
+                                            getTrangThaiHienHanh1(TrangThaiSTT);
+                                            ClearData();
                                           }
+                                        } else {
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+                                          ClearData();
                                         }
-                                       // console.log("email cbxl: ",emailcbxl);
+
+                                        // console.log("email cbxl: ",emailcbxl);
                                       }
                                     }
 
@@ -3125,7 +3260,7 @@ const Chitiethosoxuly = props => {
                                     {backgroundColor: 'red'},
                                   ]}
                                   onPress={() => {
-                                    if (MangQuyen[0] != 16) {
+                                    if (MangQuyen != 16) {
                                       handleModalPress1();
                                     } else {
                                       Huytra();
@@ -3457,22 +3592,18 @@ const Chitiethosoxuly = props => {
                                       if (MangQuyen != 16) {
                                         handleModalPress1();
                                       } else {
-                                        getTrangThaiHienHanh1(TrangThaiSTT);
-                                        ClearData();
-                                        if (checkedNNHS === true) {
-                                          if (
-                                            tabledata.MC_TTHC_GV_IDMucDo === 2
-                                          ) {
-                                            if (diadiem === '') {
-                                              handleModalPress4();
-                                            } else {
-                                              senEmailMD2();
-                                            }
+                                        if (
+                                          tabledata.MC_TTHC_GV_IDMucDo === 2
+                                        ) {
+                                          if (diadiem === '') {
+                                            handleModalPress4();
                                           } else {
-                                            sendEmail(
-                                              TEMPLATE_EMAIL_SUBJECT.SUCCESS,
-                                            );
+                                            getTrangThaiHienHanh1(TrangThaiSTT);
+                                            ClearData();
                                           }
+                                        } else {
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+                                          ClearData();
                                         }
                                       }
                                     }

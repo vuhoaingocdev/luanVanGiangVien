@@ -29,10 +29,10 @@ export const sendEmailTTHCGiangVien = ({
   let subjectEmail = '';
   let contentTitle = '';
   if (action == TEMPLATE_EMAIL_SUBJECT.RECEIVED) {
-    subjectEmail = `Thông báo ${contentSubject.toLowerCase()} - đề nghị ${dataUserSuggest?.MC_TTHC_GV_TenThuTuc.toUpperCase()} (Email tự động, vui lòng không trả lời)`;
+    subjectEmail = `Thông báo tiếp nhận${contentSubject.toLowerCase()} - đề nghị ${dataUserSuggest?.MC_TTHC_GV_TenThuTuc.toUpperCase()} (Email tự động, vui lòng không trả lời)`;
     contentTitle = 'tiếp nhận';
   } else if (action == TEMPLATE_EMAIL_SUBJECT.PENDING) {
-    subjectEmail = `Thông báo trả lời ${contentSubject.toLowerCase()} - đề nghị ${dataUserSuggest?.MC_TTHC_GV_TenThuTuc.toUpperCase()} (Email tự động, vui lòng không trả lời)`;
+    subjectEmail = `Thông báo trả lời xử lý${contentSubject.toLowerCase()} - đề nghị ${dataUserSuggest?.MC_TTHC_GV_TenThuTuc.toUpperCase()} (Email tự động, vui lòng không trả lời)`;
     contentTitle = 'xử lý';
   } else if (action == TEMPLATE_EMAIL_SUBJECT.SUCCESS) {
     subjectEmail = `Thông báo hoàn thành đề nghị ${dataUserSuggest?.MC_TTHC_GV_TenThuTuc.toUpperCase()} (Email tự động, vui lòng không trả lời)`;

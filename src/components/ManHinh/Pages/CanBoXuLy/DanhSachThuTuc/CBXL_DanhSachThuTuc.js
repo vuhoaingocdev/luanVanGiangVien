@@ -386,19 +386,17 @@ const CBXL_DanhSachThuTuc = props => {
   };
 
   //UseEffect lấy danh sách thủ tục, danh sách hồ sơ gửi lên
-  // useEffect(() => {
-  //   getMangDanhSachThuTuc();
-  //   getMangDanhSachHoSoGuiLen();
-  // }, [getTenDonVi, getTenLinhVuc]);
+  useEffect(() => {
+    getMangDanhSachThuTuc();
+  }, [getTenDonVi, getTenLinhVuc]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      getMangDanhSachThuTuc();
       getMangDanhSachHoSoGuiLen();
-    }, 2000);
+    }, 6000);
 
     return () => clearInterval(interval);
-  }, [getTenDonVi, getTenLinhVuc]);
+  }, []);
 
   //UseEffect lấy thông tin của giảng viên
   useEffect(() => {

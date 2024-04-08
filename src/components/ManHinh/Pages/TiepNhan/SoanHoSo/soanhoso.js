@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
-  Button,
-  Alert,
+ Platform
 } from 'react-native';
 import {DataTable, TextInput} from 'react-native-paper';
 import Footer from '../../../Untils/Footer';
@@ -24,16 +23,16 @@ import moment from 'moment';
 import {token} from '../../../../DangNhap/dangNhap';
 import axios from 'axios';
 import {maGiangVien} from '../../../../DangNhap/dangNhap';
-const getWidth = Dimensions.get('window').width;
-const getHeight = Dimensions.get('window').height;
 import RNFS from 'react-native-fs';
-import babelConfig from '../../../../../../babel.config';
+import {Buffer} from 'buffer';
 import ModalThongBao from '../../../Untils/ModalThongBao';
 import {
   ThongTinGiangVien,
   getThongTinhGiangVien,
 } from '../../../../../api/GetThongTin/ThongTinGiangVien';
 var dem = 0;
+const getWidth = Dimensions.get('window').width;
+const getHeight = Dimensions.get('window').height;
 const Soanhoso = props => {
   const [checkboxColor, setCheckboxColor] = useState('#245d7c');
   const [checkboxUncheckedColor, setCheckboxUncheckedColor] = useState('gray');
@@ -93,8 +92,8 @@ const Soanhoso = props => {
       setdatafile(dataFile => {
         const newDataFile = [...dataFile];
         newDataFile[index] = {
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc: TableData1.MC_TTHC_GV_ID,
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: 1,
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc:idyeucau,
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: TableData2[index].MC_TTHC_GV_ThanhPhanHoSo_ID?TableData2[index].MC_TTHC_GV_ThanhPhanHoSo_ID:'',
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile:
             'data:' + res[0].type + ';base64,' + base64Content1,
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_TenFile: res[0].name,
@@ -102,7 +101,6 @@ const Soanhoso = props => {
         return newDataFile;
       });
       dem++;
-      //console.log(base64Content);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('Hủy chọn tệp');
@@ -124,6 +122,34 @@ const Soanhoso = props => {
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
+  const [idyeucau,setidyeucau]=useState('');
+  const apigetidyeucau=`https://apiv2.uneti.edu.vn//api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Add_Para_KiemTraTrung?MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu=${ThongTinGiangVien.MaNhanSu}&MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${TableData1.MC_TTHC_GV_ID}&MC_TTHC_GV_GuiYeuCau_TrangThai_ID=0`
+  const getidyeucau = async () => {
+    const apiCall = async () => {
+      const response = await axios.get(apigetidyeucau, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if(response.status===200)
+      {
+        setidyeucau(response.data.body[0].MC_TTHC_GV_GuiYeuCau_ID);
+      }
+
+        
+
+    };
+
+    try {
+      await retry(apiCall);
+    } catch (error) {
+      console.error('API call failed after multiple attempts:', error);
+    }
+  };
+  useEffect(()=>{
+    getidyeucau();
+  },[TableData1.MC_TTHC_GV_ID])
   const apiPhucKhao =
     'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Add_Para';
   const PostYeuCau = async () => {
@@ -138,9 +164,8 @@ const Soanhoso = props => {
         : '',
       MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_ID,
       MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: nd ? nd : '',
-      MC_TTHC_GV_GuiYeuCau_TrangThai_ID: TableData1.MC_TTHC_GV_IDMucDo
-        ? TableData1.MC_TTHC_GV_IDMucDo
-        : '',
+      MC_TTHC_GV_GuiYeuCau_TrangThai_ID:0
+        ,
       MC_TTHC_GV_GuiYeuCau_TrangThai_GhiChu: '',
       MC_TTHC_GV_GuiYeuCau_NgayGui: moment
         .utc(moment(), 'DD/MM/YYYY')
@@ -174,7 +199,7 @@ const Soanhoso = props => {
         ? TableData1.MC_TTHC_GV_NguonTiepNhan
         : '',
     };
-
+    console.log("Data:",postdata);
     try {
       const response = await axios.post(apiPhucKhao, postdata, {
         headers: {
@@ -201,7 +226,7 @@ const Soanhoso = props => {
   const [dataFile, setdatafile] = useState([]);
   const PostYeuCau2 = async () => {
     await PostYeuCau();
-
+    console.log("Data File: ",dataFile);
     try {
       const response = await axios.post(apihoso, dataFile, {
         headers: {
@@ -305,6 +330,27 @@ const Soanhoso = props => {
   const handleCloseModal9 = () => {
     setShowModal9(false);
   };
+  const [showModal11, setShowModal11] = useState(false);
+  const handleModalPress11 = () => {
+    setShowModal11(true);
+  };
+  const handleCloseModal11 = () => {
+    setShowModal11(false);
+  };
+  const [showModal12, setShowModal12] = useState(false);
+  const handleModalPress12 = () => {
+    setShowModal12(true);
+  };
+  const handleCloseModal12 = () => {
+    setShowModal12(false);
+  };
+  const [showModal13, setShowModal13] = useState(false);
+  const handleModalPress13 = () => {
+    setShowModal13(true);
+  };
+  const handleCloseModal13 = () => {
+    setShowModal13(false);
+  };
   //Số lượng hồ sơ gửi lên
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
@@ -342,7 +388,34 @@ const Soanhoso = props => {
       console.error('API call failed after multiple attempts:', error);
     }
   };
+  const saveBufferToFile = async (bufferData, fileName, directory) => {
+    try {
+      // Tạo thư mục nếu chưa tồn tại
+      await RNFS.mkdir(directory, {NSURLIsExcludedFromBackupKey: true});
 
+      // Kết hợp đường dẫn thư mục và tên tệp
+      const filePath = `${directory}/${fileName}`;
+
+      // Kiểm tra xem tệp đã tồn tại chưa
+      const fileExists = await RNFS.exists(filePath);
+      if (fileExists) {
+        console.log('Tệp đã tồn tại:', filePath);
+        handleModalPress13();
+        return filePath; // Trả về đường dẫn của tệp đã tồn tại
+      }
+
+      // Ghi dữ liệu buffer vào tệp
+      await RNFS.writeFile(filePath, bufferData, 'base64');
+
+      console.log('Ghi tệp thành công:', filePath);
+      handleModalPress11();
+      return filePath; // Trả về đường dẫn của tệp đã ghi
+    } catch (error) {
+      handleModalPress12();
+      console.error('Lỗi khi ghi tệp:', error);
+      throw error;
+    }
+  }
   useEffect(() => {
     const interval = setInterval(() => {
       getSoLuong();
@@ -409,7 +482,21 @@ const Soanhoso = props => {
         onClose={handleCloseModal9}
         message="Hết phiên đăng nhập!"
       />
-
+     <ModalThongBao
+        visible={showModal11}
+        onClose={handleCloseModal11}
+        message="Tải xuống tệp thành công!!!"
+      />
+      <ModalThongBao
+        visible={showModal12}
+        onClose={handleCloseModal12}
+        message="Quá trình tải tệp lỗi.Hãy thử lại!!!"
+      />
+      <ModalThongBao
+        visible={showModal13}
+        onClose={handleCloseModal13}
+        message="Tệp đã tồn tại!!!"
+      />
       <View style={styles.body}>
         <ScrollView>
           <View style={[styles.viewngang]}>
@@ -642,10 +729,34 @@ const Soanhoso = props => {
                         flex: 0.2,
                       },
                     ]}>
-                    <Text style={styles.TextNormal}>
+                      <View style={{flexDirection:'column'}}>
+                      <Text style={styles.TextNormal}>
                       {td.MC_TTHC_GV_ThanhPhanHoSo_TenGiayTo}
-                      Xem/tải mẫu: {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
                     </Text>
+                    <Text style={styles.TextNormal}>
+                      Xem/tải mẫu: 
+                    </Text>
+                    <TouchableOpacity onPress={()=>{
+                      let bufferdata =td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
+                      let buffer = Buffer.from(bufferdata);
+                      let base64content = buffer.toString('base64');
+                      const directory =
+                      Platform.OS === 'android'
+                        ? '/storage/emulated/0/Download'
+                        : RNFS.DocumentDirectoryPath;
+                      saveBufferToFile(
+                      base64content,
+                      td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
+                      directory,
+                      );
+                    }}>
+                    <Text style={styles.TextNormal}>
+                     {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
+                    </Text>
+                    </TouchableOpacity>
+                   
+                      </View>
+                   
                   </DataTable.Cell>
 
                   <DataTable.Cell

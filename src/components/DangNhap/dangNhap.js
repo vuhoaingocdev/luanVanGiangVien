@@ -113,9 +113,6 @@ function DangNhap(props) {
     loadSavedData();
   }, []);
 
-  var api = 'https:apiv2.uneti.edu.vn/api/SP_MC_MaSinhVien/Load_Web_App_Para';
-  var api1 = 'https:apiv2.uneti.edu.vn/api/SP_HT_USER_GIANGVIEN/Load_MaND_HRM';
-
   function xuLiDangNhap() {
     user_login({
       TC_SV_MaSinhVien: username.toString(),

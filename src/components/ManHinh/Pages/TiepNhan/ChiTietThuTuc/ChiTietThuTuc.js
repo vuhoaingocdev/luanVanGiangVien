@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
-  Platform
+  Platform,
 } from 'react-native';
 
 import CheckBox from 'react-native-check-box';
@@ -54,7 +54,6 @@ const Chitietthutuc = props => {
     }
   };
 
-  const getAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/LoadChiTietHoSoTTHC_ByID`;
   const getDataTable = async idGuiYC => {
     const callApi = async idGuiYC => {
       try {
@@ -92,7 +91,6 @@ const Chitietthutuc = props => {
   //Số lượng hồ sơ gửi lên
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
-  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
   const getSoLuong = async () => {
     const apiCall = async () => {
       const response = await axios.get(apiSoLuongThuGuiLen, {
@@ -413,30 +411,31 @@ const Chitietthutuc = props => {
                           flex: 0.2,
                         },
                       ]}>
-                        <View style={{flexDirection:'column'}}>
+                      <View style={{flexDirection: 'column'}}>
                         <Text style={styles.TextNormal}>
-                        Xem mẫu hướng dẫn:
-                      </Text>
-                      <TouchableOpacity onPress={()=>{
-                                let bufferdata =td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
-                                let buffer = Buffer.from(bufferdata);
-                                let base64content = buffer.toString('base64');
-                                const directory =
-                                Platform.OS === 'android'
-                                  ? '/storage/emulated/0/Download'
-                                  : RNFS.DocumentDirectoryPath;
-                                saveBufferToFile(
-                                base64content,
-                                td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
-                                directory,
-                                );
-                      }}>
-                      <Text style={styles.TextNormal}>
-                       {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
-                      </Text>
-                      </TouchableOpacity>
-                        </View>
-                     
+                          Xem mẫu hướng dẫn:
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            let bufferdata =
+                              td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
+                            let buffer = Buffer.from(bufferdata);
+                            let base64content = buffer.toString('base64');
+                            const directory =
+                              Platform.OS === 'android'
+                                ? '/storage/emulated/0/Download'
+                                : RNFS.DocumentDirectoryPath;
+                            saveBufferToFile(
+                              base64content,
+                              td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
+                              directory,
+                            );
+                          }}>
+                          <Text style={styles.TextNormal}>
+                            {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </DataTable.Cell>
 
                     <DataTable.Cell
@@ -499,7 +498,10 @@ const Chitietthutuc = props => {
             <View style={{width: '60%', flexDirection: 'row'}}>
               <Text style={styles.TextBold}>: </Text>
               <Text style={styles.TextNormal}>
-                {tabledata.MC_TTHC_GV_SoBoHoSo?tabledata.MC_TTHC_GV_SoBoHoSo:'1'} bộ
+                {tabledata.MC_TTHC_GV_SoBoHoSo
+                  ? tabledata.MC_TTHC_GV_SoBoHoSo
+                  : '1'}{' '}
+                bộ
               </Text>
             </View>
           </View>
@@ -511,7 +513,12 @@ const Chitietthutuc = props => {
             <View style={{width: '56%', flexDirection: 'row'}}>
               <Text style={styles.TextBold}>: </Text>
               <Text style={[styles.TextNormal, {textAlign: 'left'}]}>
-                <Text>{tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet?tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet:'2'} ngày kể từ khi nhận đủ hồ sơ hợp lệ</Text>
+                <Text>
+                  {tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet
+                    ? tabledata.MC_TTHC_GV_TongThoiGianGiaiQuyet
+                    : '2'}{' '}
+                  ngày kể từ khi nhận đủ hồ sơ hợp lệ
+                </Text>
               </Text>
             </View>
           </View>

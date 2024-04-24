@@ -32,8 +32,6 @@ const ModalDonViVaLinhVuc = props => {
   const [tenLinhVucAPI, setTenLinhVucAPI] = useState([]);
 
   //Lấy tên đơn vị
-  const apiGetTenDonVi =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/Load_DonVi';
 
   const getMangTenDonViAPI = async () => {
     try {
@@ -54,8 +52,7 @@ const ModalDonViVaLinhVuc = props => {
   };
 
   //Lấy tên lĩnh vực
-  const apiGetTenLinhVuc =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/Load_LinhVuc';
+
   const getMangTenLinhVucAPI = async () => {
     try {
       const response = await axios.get(apiGetTenLinhVuc, {

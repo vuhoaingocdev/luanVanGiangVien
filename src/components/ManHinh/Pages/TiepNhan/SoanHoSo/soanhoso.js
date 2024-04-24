@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
- Platform
+  Platform,
 } from 'react-native';
 import {DataTable, TextInput} from 'react-native-paper';
 import Footer from '../../../Untils/Footer';
@@ -92,8 +92,10 @@ const Soanhoso = props => {
       setdatafile(dataFile => {
         const newDataFile = [...dataFile];
         newDataFile[index] = {
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc:idyeucau,
-          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: TableData2[index].MC_TTHC_GV_ThanhPhanHoSo_ID?TableData2[index].MC_TTHC_GV_ThanhPhanHoSo_ID:'',
+          MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDThanhPhanHoSo: TableData2[index]
+            .MC_TTHC_GV_ThanhPhanHoSo_ID
+            ? TableData2[index].MC_TTHC_GV_ThanhPhanHoSo_ID
+            : '',
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_DataFile:
             'data:' + res[0].type + ';base64,' + base64Content1,
           MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_TenFile: res[0].name,
@@ -122,36 +124,30 @@ const Soanhoso = props => {
   useEffect(() => {
     getThongTinhGiangVien();
   }, []);
-  const [idyeucau,setidyeucau]=useState('');
-  const apigetidyeucau=`https://apiv2.uneti.edu.vn//api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Add_Para_KiemTraTrung?MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu=${ThongTinGiangVien.MaNhanSu}&MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${TableData1.MC_TTHC_GV_ID}&MC_TTHC_GV_GuiYeuCau_TrangThai_ID=0`
+  const [idyeucau, setidyeucau] = useState('');
   const getidyeucau = async () => {
-    const apiCall = async () => {
-      const response = await axios.get(apigetidyeucau, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      if(response.status===200)
-      {
-        setidyeucau(response.data.body[0].MC_TTHC_GV_GuiYeuCau_ID);
+    const response = await axios.get(apigetidyeucau, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (response.status === 200) {
+      if (response.data.body.length === 0) {
+        return null;
+      } else {
+        console.log(
+          'ID GUI YEU CAU: ',
+          response.data.body[0].MC_TTHC_GV_GuiYeuCau_ID,
+        );
+        return response.data.body[0].MC_TTHC_GV_GuiYeuCau_ID;
+        // setidyeucau(response.data.body[0].MC_TTHC_GV_GuiYeuCau_ID);
       }
-
-        
-
-    };
-
-    try {
-      await retry(apiCall);
-    } catch (error) {
-      console.error('API call failed after multiple attempts:', error);
+    } else {
+      return;
     }
   };
-  useEffect(()=>{
-    getidyeucau();
-  },[TableData1.MC_TTHC_GV_ID])
-  const apiPhucKhao =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Add_Para';
+
   const PostYeuCau = async () => {
     var postdata = {
       MC_TTHC_GV_GuiYeuCau_NhanSuGui_MaNhanSu: ThongTinGiangVien.MaNhanSu
@@ -164,8 +160,7 @@ const Soanhoso = props => {
         : '',
       MC_TTHC_GV_GuiYeuCau_YeuCau_ID: TableData1.MC_TTHC_GV_ID,
       MC_TTHC_GV_GuiYeuCau_YeuCau_GhiChu: nd ? nd : '',
-      MC_TTHC_GV_GuiYeuCau_TrangThai_ID:0
-        ,
+      MC_TTHC_GV_GuiYeuCau_TrangThai_ID: 0,
       MC_TTHC_GV_GuiYeuCau_TrangThai_GhiChu: '',
       MC_TTHC_GV_GuiYeuCau_NgayGui: moment
         .utc(moment(), 'DD/MM/YYYY')
@@ -199,7 +194,7 @@ const Soanhoso = props => {
         ? TableData1.MC_TTHC_GV_NguonTiepNhan
         : '',
     };
-    console.log("Data:",postdata);
+    console.log('Data:', postdata);
     try {
       const response = await axios.post(apiPhucKhao, postdata, {
         headers: {
@@ -207,28 +202,29 @@ const Soanhoso = props => {
           'Content-Type': 'application/json',
         },
       });
-      if (response.data.message === 'Bản ghi bị trùng.') {
-        handleModalPress();
-      } else {
-        if (response.status == 200) {
-          handleModalPress1();
-        }
+      if (response.status == 200) {
+        const IDYEUCAU = await getidyeucau();
+        console.log('ID YEU CAU:', IDYEUCAU);
+        await PostYeuCau2(IDYEUCAU);
+        handleModalPress1();
       }
-
       if (response.status === 403) {
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const apihoso =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_ThanhPhanHoSoTiepNhan/GuiYeuCau_Add_Para';
   const [dataFile, setdatafile] = useState([]);
-  const PostYeuCau2 = async () => {
-    await PostYeuCau();
-    console.log("Data File: ",dataFile);
+  const PostYeuCau2 = async idyeucau => {
+    const updatedArray = dataFile.map(item => ({
+      ...item,
+      MC_TTHC_GV_ThanhPhanHoSo_GuiYeuCau_IDGoc: idyeucau, // Thêm thuộc tính mới vào mỗi object
+    }));
+    setdatafile(updatedArray);
+
+    console.log('Data File: ', updatedArray);
     try {
-      const response = await axios.post(apihoso, dataFile, {
+      const response = await axios.post(apihoso, updatedArray, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -354,7 +350,6 @@ const Soanhoso = props => {
   //Số lượng hồ sơ gửi lên
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
-  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
   const getSoLuong = async () => {
     const apiCall = async () => {
       const response = await axios.get(apiSoLuongThuGuiLen, {
@@ -415,7 +410,7 @@ const Soanhoso = props => {
       console.error('Lỗi khi ghi tệp:', error);
       throw error;
     }
-  }
+  };
   useEffect(() => {
     const interval = setInterval(() => {
       getSoLuong();
@@ -482,7 +477,7 @@ const Soanhoso = props => {
         onClose={handleCloseModal9}
         message="Hết phiên đăng nhập!"
       />
-     <ModalThongBao
+      <ModalThongBao
         visible={showModal11}
         onClose={handleCloseModal11}
         message="Tải xuống tệp thành công!!!"
@@ -729,34 +724,32 @@ const Soanhoso = props => {
                         flex: 0.2,
                       },
                     ]}>
-                      <View style={{flexDirection:'column'}}>
+                    <View style={{flexDirection: 'column'}}>
                       <Text style={styles.TextNormal}>
-                      {td.MC_TTHC_GV_ThanhPhanHoSo_TenGiayTo}
-                    </Text>
-                    <Text style={styles.TextNormal}>
-                      Xem/tải mẫu: 
-                    </Text>
-                    <TouchableOpacity onPress={()=>{
-                      let bufferdata =td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
-                      let buffer = Buffer.from(bufferdata);
-                      let base64content = buffer.toString('base64');
-                      const directory =
-                      Platform.OS === 'android'
-                        ? '/storage/emulated/0/Download'
-                        : RNFS.DocumentDirectoryPath;
-                      saveBufferToFile(
-                      base64content,
-                      td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
-                      directory,
-                      );
-                    }}>
-                    <Text style={styles.TextNormal}>
-                     {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
-                    </Text>
-                    </TouchableOpacity>
-                   
-                      </View>
-                   
+                        {td.MC_TTHC_GV_ThanhPhanHoSo_TenGiayTo}
+                      </Text>
+                      <Text style={styles.TextNormal}>Xem/tải mẫu:</Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          let bufferdata =
+                            td.MC_TTHC_GV_ThanhPhanHoSo_DataFile.data;
+                          let buffer = Buffer.from(bufferdata);
+                          let base64content = buffer.toString('base64');
+                          const directory =
+                            Platform.OS === 'android'
+                              ? '/storage/emulated/0/Download'
+                              : RNFS.DocumentDirectoryPath;
+                          saveBufferToFile(
+                            base64content,
+                            td.MC_TTHC_GV_ThanhPhanHoSo_TenFile,
+                            directory,
+                          );
+                        }}>
+                        <Text style={styles.TextNormal}>
+                          {td.MC_TTHC_GV_ThanhPhanHoSo_TenFile}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                   </DataTable.Cell>
 
                   <DataTable.Cell
@@ -895,7 +888,7 @@ const Soanhoso = props => {
                 if (base64Content === '') {
                   handleModalPress5();
                 } else {
-                  PostYeuCau2();
+                  PostYeuCau();
                   ClearData();
                 }
               }

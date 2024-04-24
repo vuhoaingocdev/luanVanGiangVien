@@ -21,7 +21,6 @@ import {maGiangVien} from '../../../../DangNhap/dangNhap';
 const TheoDoiDeNghi = props => {
   const [danhSachHoSoDaGui, setDanhSachHoSoDaGui] = useState([]);
   const [soLuongHoSoGuiLen, setSoLuongHoSoGuiLen] = useState(0);
-  const apiGetDanhDachHoSoDaGui = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
 
   //Retry
   const retry = async (func, maxAttempts = 3, delay = 2000, backoff = 2) => {

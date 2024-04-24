@@ -3,7 +3,6 @@ import axios from 'axios';
 import {token} from '../../components/DangNhap/dangNhap';
 import {maGiangVien} from '../../components/DangNhap/dangNhap';
 import {matkhau} from '../../components/DangNhap/dangNhap';
-var api = 'https://apiv2.uneti.edu.vn/api/SP_HT_USER_GIANGVIEN/Load_MaND_HRM';
 const ThongTinGiangVien = {
   IDSinhVien: '',
   IDNhanSu: '',

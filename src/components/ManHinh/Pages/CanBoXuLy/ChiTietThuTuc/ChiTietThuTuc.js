@@ -57,7 +57,7 @@ const Chitiethosoxuly = props => {
   const Close = () => {
     setOpenModal(false);
   };
-  const [tabledata, setTableData] = useState([]);
+  const [tabledata, setTableData] = useState({});
   const [idthutucgui, setidthutucgui] = useState('');
   const [TrangThaiSTT, setTrangThaiSTT] = useState(0);
   const [idYeuCauGui, setidYeuCauGui] = useState(
@@ -85,9 +85,8 @@ const Chitiethosoxuly = props => {
       }
     }
   };
-  var getAPI1 = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_R_Para_File`;
   const getDataHoSo = async IDyeucau => {
-    const callApi = async IDyeucau => {
+    try {
       const response = await axios.get(getAPI1, {
         params: {MC_TTHC_GV_GuiYeuCau_ID: IDyeucau},
         headers: {
@@ -95,41 +94,40 @@ const Chitiethosoxuly = props => {
           'Content-Type': 'application/json',
         },
       });
-      setTableData(await response.data.body[0]);
-      // console.log(response.data.body[0]);
-      console.log(
-        'Trạng thái id:' + response.data.body[0].MC_TTHC_GV_TrangThai_STT,
-      );
-      console.log('ID lần gửi yêu cầu: ' + idYeuCauGui);
-      if (response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID === -1) {
-        setTrangThaiSTT(0);
-      } else {
-        if (response.data.body[0].MC_TTHC_GV_TrangThai_STT === null) {
-          setTrangThaiSTT(0 + 1);
-        } else {
-          setTrangThaiSTT(response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1);
-        }
-      }
+      if (response.status === 200) {
+        setTableData(await response.data.body[0]);
 
-      setIDtrangthai(response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID);
-      setidthutucgui(response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID);
-      console.log(
-        'ID thủ tục gửi lên: ',
-        response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
-        ' STT: ',
-        response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1,
-      );
-    };
-    try {
-      await retry(() => callApi(IDyeucau));
+        console.log(
+          'Trạng thái id:' + response.data.body[0].MC_TTHC_GV_TrangThai_STT,
+        );
+        console.log('ID lần gửi yêu cầu: ' + idYeuCauGui);
+        if (response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID === -1) {
+          setTrangThaiSTT(0);
+        } else {
+          if (response.data.body[0].MC_TTHC_GV_TrangThai_STT === null) {
+            setTrangThaiSTT(0 + 1);
+          } else {
+            setTrangThaiSTT(response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1);
+          }
+        }
+        setIDtrangthai(response.data.body[0].MC_TTHC_GV_GuiYeuCau_TrangThai_ID);
+        setidthutucgui(response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID);
+        console.log(
+          'ID thủ tục gửi lên: ',
+          response.data.body[0].MC_TTHC_GV_GuiYeuCau_YeuCau_ID,
+          ' STT: ',
+          response.data.body[0].MC_TTHC_GV_TrangThai_STT + 1,
+        );
+      } else {
+        props.navigation.goBack();
+      }
     } catch (error) {
       console.error(error + 'Getdatahoso');
     }
   };
   const [tabledata2, setTableData2] = useState([]);
-  var getAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_ThanhPhanHoSoTiepNhan/GuiYeuCau_Load_ByIDGuiYeuCau?MC_TTHC_GV_GuiYeuCau_ID=${idYeuCauGui}`;
   const getDataTabble = async () => {
-    const callApi = async () => {
+    try {
       const response = await axios.get(getAPI, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -137,71 +135,53 @@ const Chitiethosoxuly = props => {
         },
       });
       setTableData2(response.data.body);
-    };
-    try {
-      await retry(callApi);
     } catch (error) {
       console.error(error + 'Getdatatbale');
     }
   };
   const getDataQuyTrinh = async () => {
-    const callApi = async () => {
-      const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_Load_ByIDGoc?MC_TTHC_GV_IDTTHC=${idthutucgui}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+    try {
+      const response = await axios.get({
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-      );
+      });
       setquytrinh(response.data.body);
       console.log('Yeu Cau ID Quy Trinh: ', idthutucgui);
       console.log('Data quy trinh:' + response.data.body);
-    };
-    try {
-      await retry(callApi);
     } catch (error) {
       console.error(error + 'Getdataquytrinh');
     }
   };
   const [TenTrangThai, setTenTrangThai] = useState('');
   const getTrangThaiHienHanh = async TrangThaiSTT => {
-    const callApi = async () => {
-      const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${idthutucgui}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      const data = await response.data.body[0];
-      console.log(data);
-      setMangBuocHienHanh(data);
-    };
     try {
-      await retry(callApi);
+      const response = await axios.get({
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.data.body[0];
+      console.log('Trang thai hien hanh:', data);
+      setMangBuocHienHanh(data);
     } catch (error) {
       console.error(error + 'Getdatatrangthaihienhanh');
     }
   };
   const getTrangThaiHienHanh1 = async TrangThaiSTT => {
-    if (checked === '1') {
-      TrangThaiSTT = TrangThaiSTT - 2;
+    if (checked === '1' && tabledata.MC_TTHC_GV_TrangThai_STT_BGHD !== null) {
+      TrangThaiSTT = TrangThaiSTT + 1;
       handleModalPress3();
     }
     const callApi = async () => {
-      const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TrangThaiTiepNhan/TrangThai_GetID_BySTT?MC_TTHC_GV_GuiYeuCau_YeuCau_ID=${idthutucgui}&MC_TTHC_GV_TrangThai_STT=${TrangThaiSTT}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.get({
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-      );
+      });
       const data = await response.data.body[0];
       console.log(data);
       const TrangThai = data.MC_TTHC_GV_TrangThai_ID;
@@ -222,15 +202,12 @@ const Chitiethosoxuly = props => {
   };
   const getQuytrinhXuly = async () => {
     const callApi = async () => {
-      const response = await axios.get(
-        `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_CBNV_TheoDoi_QuyTrinhXuLy_Load_Para?MC_TTHC_GV_GuiYeuCau_ID=${idYeuCauGui}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.get({
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-      );
+      });
       const data = await response.data.body;
       console.log('DataQuyTrinh' + data);
       Setmangquytrinh(data);
@@ -243,7 +220,6 @@ const Chitiethosoxuly = props => {
       console.error(error + 'Getdataquytrinhxuly');
     }
   };
-  const apiGetChiTietTiepNhanHoSo = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_NguoiDung_TheoDoi_QuyTrinhXuLy_Load_Para`;
   const getChiTietTiepNhanHoSo = async (idGuiYC, getTrangThai1) => {
     const callApi2 = async (idGuiYC, getTrangThai1) => {
       const response = await axios.get(apiGetChiTietTiepNhanHoSo, {
@@ -284,7 +260,6 @@ const Chitiethosoxuly = props => {
     }
   };
   const [emailcbxl, setemailcbxl] = useState('');
-  const apigetemailcbxl = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_PhanQuyenTiepNhan/Load_CanBoXuLy_ByIDGoc?MC_TTHC_GV_PhanQuyen_IDTTHC=${idthutucgui}`;
   const getemailcbxl = async () => {
     const callApi = async () => {
       const response = await axios.get(apigetemailcbxl, {
@@ -310,17 +285,15 @@ const Chitiethosoxuly = props => {
   };
 
   useEffect(() => {
-    if (tabledata2 === 0) return;
     getDataTabble();
-    //  console.log('Mảng quyền: ', MangQuyen);
-  }, [tabledata2]);
+  }, [idYeuCauGui]);
   const [dataquytrinh, setquytrinh] = useState([]);
   useEffect(() => {
     getQuytrinhXuly();
-  }, []);
+  }, [idYeuCauGui]);
   useEffect(() => {
     getDataHoSo(idYeuCauGui);
-  }, []);
+  }, [idYeuCauGui]);
   useEffect(() => {
     getemailcbxl();
   }, [idthutucgui]);
@@ -328,12 +301,15 @@ const Chitiethosoxuly = props => {
     console.log('Testidthutucgui:', idthutucgui);
     console.log('Testidthutucgui:', TrangThaiSTT);
     if (TrangThaiSTT === null || idthutucgui === 0) return;
-    getDataQuyTrinh();
     getTrangThaiHienHanh(TrangThaiSTT);
   }, [TrangThaiSTT, idthutucgui]);
   useEffect(() => {
+    if (idthutucgui === 0) return;
+    getDataQuyTrinh();
+  }, [idthutucgui]);
+  useEffect(() => {
     getThongTinhGiangVien();
-  }, []);
+  }, [ThongTinGiangVien.MaNhanSu]);
   useEffect(() => {
     if (idthutucgui !== '' || getTrangThai1 !== '') {
       getChiTietTiepNhanHoSo(idYeuCauGui, getTrangThai1);
@@ -453,7 +429,6 @@ const Chitiethosoxuly = props => {
     }
   };
 
-  var PutAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Edit_Para`;
   const PostYeuCau = async ({TrangThai, TenTrangThai}) => {
     var postdata = {
       MC_TTHC_GV_GuiYeuCau_ID: idYeuCauGui ? idYeuCauGui : '',
@@ -558,7 +533,7 @@ const Chitiethosoxuly = props => {
           if (checkedNNHS === true) {
             if (tabledata.MC_TTHC_GV_IDMucDo !== 4) {
               senEmailMD2();
-            } 
+            }
           }
         }
       }
@@ -569,7 +544,6 @@ const Chitiethosoxuly = props => {
       console.error(error);
     }
   };
-  var PutAPI = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Edit_Para`;
   const Huytra = async () => {
     var postdata = {
       MC_TTHC_GV_GuiYeuCau_ID: idYeuCauGui,
@@ -624,7 +598,6 @@ const Chitiethosoxuly = props => {
       console.error(error);
     }
   };
-  var SendEmail = `https://apiv2.uneti.edu.vn/api/send-email/Verifier`;
   const sendEmail = async acTion => {
     const {contentReply, emailHtml, subjectEmail} = sendEmailTTHCGiangVien({
       action: acTion,
@@ -1429,1207 +1402,844 @@ const Chitiethosoxuly = props => {
             Quy trình xử lý
           </Text>
         </View>
-        {status2
-          ? dataquytrinh
-            ? dataquytrinh.map(td => (
-                <View style={{marginTop: -10}}>
-                  <View style={{flexDirection: 'row'}}>
-                    {td.MC_TTHC_GV_TrangThai_STT < TrangThaiSTT ? (
-                      <Image
-                        source={require('../../../../../images/check-mark.png')}
+        {status2 ? (
+          !dataquytrinh.length ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                flex: 1,
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator />
+            </View>
+          ) : (
+            dataquytrinh.map(td => (
+              <View style={{marginTop: -10}}>
+                <View style={{flexDirection: 'row'}}>
+                  {td.MC_TTHC_GV_TrangThai_STT < TrangThaiSTT ? (
+                    <Image
+                      source={require('../../../../../images/check-mark.png')}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        marginLeft: 10,
+                        marginTop: 10,
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../../../../../images/dry-clean.png')}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        marginLeft: 10,
+                        marginTop: 10,
+                      }}
+                    />
+                  )}
+
+                  {td.MC_TTHC_GV_TrangThai_STT < TrangThaiSTT ? (
+                    <View style={[styles.tieudebuoc]}>
+                      <Text style={styles.texttieudebuoc}>
+                        Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
+                        {td.MC_TTHC_GV_TrangThai_TenTrangThai}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={[styles.tieudebuoc1]}>
+                      <Text style={styles.texttieudebuoc1}>
+                        Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
+                        {td.MC_TTHC_GV_TrangThai_TenTrangThai}
+                      </Text>
+                    </View>
+                  )}
+                  {TrangThaiSTT === 0 ? (
+                    <View style={[styles.tieudebuoc1]}>
+                      <Text style={styles.texttieudebuoc1}>
+                        Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
+                        {td.MC_TTHC_GV_TrangThai_TenTrangThai}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+
+                {MangBuocHienHanh != null ? (
+                  MangBuocHienHanh.MC_TTHC_GV_TrangThai_ID ===
+                  td.MC_TTHC_GV_TrangThai_ID ? (
+                    <View style={{flexDirection: 'row'}}>
+                      <View
                         style={{
-                          width: 50,
-                          height: 50,
-                          marginLeft: 10,
-                          marginTop: 10,
+                          height: firstViewHeight,
+                          marginTop: -11,
+                          width: 1,
+                          borderWidth: 1,
+                          backgroundColor: '#2e6b8b',
+                          borderColor: '#2e6b8b',
+                          marginLeft: 33,
                         }}
                       />
-                    ) : (
-                      <Image
-                        source={require('../../../../../images/dry-clean.png')}
-                        style={{
-                          width: 50,
-                          height: 50,
-                          marginLeft: 10,
-                          marginTop: 10,
-                        }}
-                      />
-                    )}
-
-                    {td.MC_TTHC_GV_TrangThai_STT < TrangThaiSTT ? (
-                      <View style={[styles.tieudebuoc]}>
-                        <Text style={styles.texttieudebuoc}>
-                          Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
-                          {td.MC_TTHC_GV_TrangThai_TenTrangThai}
-                        </Text>
-                      </View>
-                    ) : (
-                      <View style={[styles.tieudebuoc1]}>
-                        <Text style={styles.texttieudebuoc1}>
-                          Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
-                          {td.MC_TTHC_GV_TrangThai_TenTrangThai}
-                        </Text>
-                      </View>
-                    )}
-                    {TrangThaiSTT === 0 ? (
-                      <View style={[styles.tieudebuoc1]}>
-                        <Text style={styles.texttieudebuoc1}>
-                          Bước {td.MC_TTHC_GV_TrangThai_STT}:{' '}
-                          {td.MC_TTHC_GV_TrangThai_TenTrangThai}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-
-                  {MangBuocHienHanh != null ? (
-                    MangBuocHienHanh.MC_TTHC_GV_TrangThai_ID ===
-                    td.MC_TTHC_GV_TrangThai_ID ? (
-                      <View style={{flexDirection: 'row'}}>
-                        <View
-                          style={{
-                            height: firstViewHeight,
-                            marginTop: -11,
-                            width: 1,
-                            borderWidth: 1,
-                            backgroundColor: '#2e6b8b',
-                            borderColor: '#2e6b8b',
-                            marginLeft: 33,
-                          }}
-                        />
-                        {IdTrangThai === -1 ? (
-                          <View></View>
-                        ) : TrangThaiSTT === 1 ? (
-                          <View style={[styles.noidungtungbuoc]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                width: '90%',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                marginLeft: 15,
-                                marginTop: 5,
-                              }}>
-                              <View style={{flexDirection: 'row'}}>
-                                <CheckBox
-                                  value={checkedNNHS}
-                                  tintColors={{
-                                    true: checkboxColor,
-                                    false: checkboxUncheckedColor,
-                                  }}
-                                />
-                                <Text
-                                  style={[
-                                    styles.TextNormal,
-                                    {
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      fontSize: 13,
-                                    },
-                                  ]}>
-                                  Người nộp hồ sơ
-                                </Text>
-                              </View>
-                            </View>
-                            {tabledata.MC_TTHC_GV_IDMucDo === 2 ? (
-                              <View style={{flexDirection: 'row'}}>
-                                <View style={{marginTop: 10, marginLeft: 15}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Ngày giờ hẹn trả
-                                  </Text>
-                                  <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity
-                                      onPress={handlePress}
-                                      style={{
-                                        flexDirection: 'row',
-                                        borderWidth: 1,
-                                        width: '65%',
-                                        borderRadius: 5,
-                                      }}>
-                                      <DatePicker
-                                        modal
-                                        mode="datetime"
-                                        open={open}
-                                        date={ngaygui}
-                                        onConfirm={ngaygui => {
-                                          setopen(false);
-                                          setngaygui(ngaygui);
-                                        }}
-                                        onCancel={() => {
-                                          setopen(false);
-                                        }}
-                                      />
-                                      <TextInput
-                                        readOnly={true}
-                                        style={{
-                                          height: 30,
-                                          width: '80%',
-                                          backgroundColor: '#ffffff',
-                                        }}
-                                        value={ngaygui
-                                          .toLocaleDateString('vi-VN')
-                                          .toString()}
-                                      />
-
-                                      <Image
-                                        source={require('../../../../../images/calendar.png')}
-                                        style={{
-                                          width: 25,
-                                          height: 25,
-                                          marginTop: 2.5,
-                                          marginLeft: -3,
-                                        }}
-                                      />
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                                <View style={{marginTop: 10, marginLeft: -30}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Địa điểm hẹn trả
-                                    <Text style={{color: 'red'}}>(*)</Text>
-                                  </Text>
-
-                                  <TextInput
-                                    style={{
-                                      height: 20,
-                                      width: 120,
-                                      fontSize: 18,
-
-                                      borderColor: 'black',
-                                      borderWidth: 0.5,
-                                      padding: 5,
-                                      borderRadius: 5,
-                                      borderTopLeftRadius: 5,
-                                      borderTopRightRadius: 5,
-                                      color: 'black',
-                                      backgroundColor: '#ffffff',
-                                      backgroundColor: '#ffffff',
-                                    }}
-                                    onChangeText={text => setdiadiem(text)}
-                                    value={diadiem}
-                                    multiline={true}
-                                    numberOfLines={4}
-                                    underlineColor="transparent"
-                                  />
-                                </View>
-                              </View>
-                            ) : null}
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:<Text style={{color: 'red'}}>(*)</Text>
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
-                                marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
-                              }}
-                              placeholder="Nhập link tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
-                            <View
-                              style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 50,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  chooseFile();
+                      {IdTrangThai === -1 ? (
+                        <View></View>
+                      ) : TrangThaiSTT === 1 ? (
+                        <View style={[styles.noidungtungbuoc]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '90%',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              marginLeft: 15,
+                              marginTop: 5,
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <CheckBox
+                                value={checkedNNHS}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
                                 }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
-                                }}>
-                                <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
-                                </Text>
-                              </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
-                              </View>
-                            </View>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter}>
-                              <View
+                              />
+                              <Text
                                 style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
+                                  styles.TextNormal,
+                                  {
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    fontSize: 13,
+                                  },
                                 ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 16) {
-                                        handleModalPress1();
-                                      } else {
-                                        if (
-                                          tabledata.MC_TTHC_GV_IDMucDo === 2
-                                        ) {
-                                          if (diadiem === '') {
-                                            handleModalPress4();
-                                          } else {
-                                            getTrangThaiHienHanh1(TrangThaiSTT);
-                                            ClearData();
-                                          }
-                                        } else {
-                                          getTrangThaiHienHanh1(TrangThaiSTT);
-                                          ClearData();
-                                        }
-                                      }
-                                    }
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Tiếp nhận
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-
-                              <View
-                                style={[styles.buttonHuy, {marginRight: 30}]}>
-                                <TouchableOpacity
-                                  style={[
-                                    styles.touchableOpacity,
-                                    {backgroundColor: 'red'},
-                                  ]}
-                                  onPress={() => {
-                                    if (MangQuyen != 16) {
-                                      handleModalPress1();
-                                    } else {
-                                      Huytra();
-                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
-                                    }
-                                  }}>
-                                  <Text
-                                    style={{color: '#ffffff', fontSize: 19}}>
-                                    Hủy trả
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
+                                Người nộp hồ sơ
+                              </Text>
                             </View>
                           </View>
-                        ) : TrangThaiSTT === 2 ? (
-                          <View style={[styles.noidungtungbuoc]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                width: '94.5%',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                marginLeft: 15,
-                                marginTop: 5,
-                              }}>
-                              <View style={{flexDirection: 'row'}}>
-                                <CheckBox
-                                  value={checkedNNHS}
-                                  onValueChange={() => {
-                                    setCheckedNNHS(!checkedNNHS);
-                                  }}
-                                  tintColors={{
-                                    true: checkboxColor,
-                                    false: checkboxUncheckedColor,
-                                  }}
-                                />
+                          {tabledata.MC_TTHC_GV_IDMucDo === 2 ? (
+                            <View style={{flexDirection: 'row'}}>
+                              <View style={{marginTop: 10, marginLeft: 15}}>
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      fontSize: 13,
-                                    },
+                                    {textAlign: 'left'},
                                   ]}>
-                                  Người nộp hồ sơ
+                                  Ngày giờ hẹn trả
                                 </Text>
-                              </View>
-                              {tabledata.MC_TTHC_GV_IDMucDo != 2 ? (
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    marginLeft: 0,
-                                  }}>
-                                  <CheckBox
-                                    value={checkedTPDV}
-                                    tintColors={{
-                                      true: checkboxColor,
-                                      false: checkboxUncheckedColor,
-                                    }}
-                                  />
-                                  <Text
+                                <View style={{flexDirection: 'row'}}>
+                                  <TouchableOpacity
+                                    onPress={handlePress}
                                     style={{
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      textAlign: 'center',
-                                      color: 'black',
-                                      fontSize: 13,
+                                      flexDirection: 'row',
+                                      borderWidth: 1,
+                                      width: '65%',
+                                      borderRadius: 5,
                                     }}>
-                                    Trưởng/phó đơn vị
-                                  </Text>
-                                </View>
-                              ) : null}
-                            </View>
-                            {tabledata.MC_TTHC_GV_IDMucDo === 2 ? (
-                              <View style={{flexDirection: 'row'}}>
-                                <View style={{marginTop: 10, marginLeft: 15}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Ngày giờ hẹn trả
-                                  </Text>
-                                  <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity
-                                      onPress={handlePress}
+                                    <DatePicker
+                                      modal
+                                      mode="datetime"
+                                      open={open}
+                                      date={ngaygui}
+                                      onConfirm={ngaygui => {
+                                        setopen(false);
+                                        setngaygui(ngaygui);
+                                      }}
+                                      onCancel={() => {
+                                        setopen(false);
+                                      }}
+                                    />
+                                    <TextInput
+                                      readOnly={true}
                                       style={{
-                                        flexDirection: 'row',
-                                        borderWidth: 1,
-                                        width: '65%',
-                                        borderRadius: 5,
-                                      }}>
-                                      <DatePicker
-                                        modal
-                                        mode="datetime"
-                                        open={open}
-                                        date={ngaygui}
-                                        onConfirm={ngaygui => {
-                                          setopen(false);
-                                          setngaygui(ngaygui);
-                                        }}
-                                        onCancel={() => {
-                                          setopen(false);
-                                        }}
-                                      />
-                                      <TextInput
-                                        readOnly={true}
-                                        style={{
-                                          height: 30,
-                                          width: '80%',
-                                          backgroundColor: '#ffffff',
-                                        }}
-                                        value={ngaygui
-                                          .toLocaleDateString('vi-VN')
-                                          .toString()}
-                                      />
+                                        height: 30,
+                                        width: '80%',
+                                        backgroundColor: '#ffffff',
+                                      }}
+                                      value={ngaygui
+                                        .toLocaleDateString('vi-VN')
+                                        .toString()}
+                                    />
 
-                                      <Image
-                                        source={require('../../../../../images/calendar.png')}
-                                        style={{
-                                          width: 25,
-                                          height: 25,
-                                          marginTop: 2.5,
-                                          marginLeft: -3,
-                                        }}
-                                      />
-                                    </TouchableOpacity>
-                                  </View>
+                                    <Image
+                                      source={require('../../../../../images/calendar.png')}
+                                      style={{
+                                        width: 25,
+                                        height: 25,
+                                        marginTop: 2.5,
+                                        marginLeft: -3,
+                                      }}
+                                    />
+                                  </TouchableOpacity>
                                 </View>
-                                <View style={{marginTop: 10, marginLeft: -30}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Địa điểm hẹn trả{' '}
-                                    <Text style={{color: 'red'}}>(*)</Text>
-                                  </Text>
+                              </View>
+                              <View style={{marginTop: 10, marginLeft: -30}}>
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Địa điểm hẹn trả
+                                  <Text style={{color: 'red'}}>(*)</Text>
+                                </Text>
 
-                                  <TextInput
-                                    style={{
-                                      height: 20,
-                                      width: 120,
-                                      fontSize: 18,
+                                <TextInput
+                                  style={{
+                                    height: 20,
+                                    width: 120,
+                                    fontSize: 18,
 
-                                      borderColor: 'black',
-                                      borderWidth: 0.5,
-                                      padding: 5,
-                                      borderRadius: 5,
-                                      borderTopLeftRadius: 5,
-                                      borderTopRightRadius: 5,
-                                      color: 'black',
-                                      backgroundColor: '#ffffff',
-                                      backgroundColor: '#ffffff',
-                                    }}
-                                    onChangeText={text => setdiadiem(text)}
-                                    value={diadiem}
-                                    multiline={true}
-                                    numberOfLines={4}
-                                    underlineColor="transparent"
-                                  />
-                                </View>
+                                    borderColor: 'black',
+                                    borderWidth: 0.5,
+                                    padding: 5,
+                                    borderRadius: 5,
+                                    borderTopLeftRadius: 5,
+                                    borderTopRightRadius: 5,
+                                    color: 'black',
+                                    backgroundColor: '#ffffff',
+                                    backgroundColor: '#ffffff',
+                                  }}
+                                  onChangeText={text => setdiadiem(text)}
+                                  value={diadiem}
+                                  multiline={true}
+                                  numberOfLines={4}
+                                  underlineColor="transparent"
+                                />
+                              </View>
+                            </View>
+                          ) : null}
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:<Text style={{color: 'red'}}>(*)</Text>
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập link tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 50,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
+                              }}
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
+                            <View
+                              style={{
+                                width: '69%',
+                                height: '100%',
+                                justifyContent: 'center',
+                              }}>
+                              <ScrollView nestedScrollEnabled={true}>
+                                <Text
+                                  numberOfLines={10}
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
+                                    },
+                                  ]}>
+                                  {FileName ? FileName : 'Chưa có tệp'}
+                                </Text>
+                              </ScrollView>
+                            </View>
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter}>
+                            <View
+                              style={[
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
+                              ]}>
+                              <TouchableOpacity
+                                style={styles.touchableOpacity}
+                                onPress={() => {
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '16')) {
+                                      if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+                                        if (diadiem === '') {
+                                          handleModalPress4();
+                                        } else {
+                                          getTrangThaiHienHanh1(TrangThaiSTT);
+                                          ClearData();
+                                        }
+                                      } else {
+                                        getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
+                                      }
+                                    } else {
+                                      handleModalPress1();
+                                    }
+                                  }
+                                }}>
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Tiếp nhận
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+
+                            <View style={[styles.buttonHuy, {marginRight: 30}]}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.touchableOpacity,
+                                  {backgroundColor: 'red'},
+                                ]}
+                                onPress={() => {
+                                  if (MangQuyen.some(e => e === '16')) {
+                                    Huytra();
+                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                  } else {
+                                    handleModalPress1();
+                                  }
+                                }}>
+                                <Text style={{color: '#ffffff', fontSize: 19}}>
+                                  Hủy trả
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        </View>
+                      ) : TrangThaiSTT === 2 ? (
+                        <View style={[styles.noidungtungbuoc]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '94.5%',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              marginLeft: 15,
+                              marginTop: 5,
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <CheckBox
+                                value={checkedNNHS}
+                                onValueChange={() => {
+                                  setCheckedNNHS(!checkedNNHS);
+                                }}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
+                                }}
+                              />
+                              <Text
+                                style={[
+                                  styles.TextNormal,
+                                  {
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    fontSize: 13,
+                                  },
+                                ]}>
+                                Người nộp hồ sơ
+                              </Text>
+                            </View>
+                            {tabledata.MC_TTHC_GV_IDMucDo != 2 ? (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  marginLeft: 0,
+                                }}>
+                                <CheckBox
+                                  value={checkedTPDV}
+                                  tintColors={{
+                                    true: checkboxColor,
+                                    false: checkboxUncheckedColor,
+                                  }}
+                                />
+                                <Text
+                                  style={{
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    textAlign: 'center',
+                                    color: 'black',
+                                    fontSize: 13,
+                                  }}>
+                                  Trưởng/phó đơn vị
+                                </Text>
                               </View>
                             ) : null}
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:<Text style={{color: 'red'}}>(*)</Text>
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
-                                marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
-                              }}
-                              placeholder="Nhập link tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
-                            <View
-                              style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 60,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  chooseFile();
-                                }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
-                                }}>
+                          </View>
+                          {tabledata.MC_TTHC_GV_IDMucDo === 2 ? (
+                            <View style={{flexDirection: 'row'}}>
+                              <View style={{marginTop: 10, marginLeft: 15}}>
                                 <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
-                                </Text>
-                              </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
-                              </View>
-                            </View>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter}>
-                              <View
-                                style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
-                                ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 16) {
-                                        handleModalPress1();
-                                      } else {
-                                        if (
-                                          tabledata.MC_TTHC_GV_IDMucDo === 2
-                                        ) {
-                                          if (diadiem === '') {
-                                            handleModalPress4();
-                                          } else {
-                                            getTrangThaiHienHanh1(TrangThaiSTT);
-                                            ClearData();
-                                          }
-                                        } else {
-                                          getTrangThaiHienHanh1(TrangThaiSTT);
-                                          ClearData();
-                                        }
-                                      }
-                                    }
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Tiếp nhận
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-
-                              <View
-                                style={[styles.buttonHuy, {marginRight: 30}]}>
-                                <TouchableOpacity
                                   style={[
-                                    styles.touchableOpacity,
-                                    {backgroundColor: 'red'},
-                                  ]}
-                                  onPress={() => {
-                                    if (MangQuyen != 16) {
-                                      handleModalPress1();
-                                    } else {
-                                      Huytra();
-                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
-                                    }
-                                  }}>
-                                  <Text
-                                    style={{color: '#ffffff', fontSize: 19}}>
-                                    Hủy trả
-                                  </Text>
-                                </TouchableOpacity>
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Ngày giờ hẹn trả
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                  <TouchableOpacity
+                                    onPress={handlePress}
+                                    style={{
+                                      flexDirection: 'row',
+                                      borderWidth: 1,
+                                      width: '65%',
+                                      borderRadius: 5,
+                                    }}>
+                                    <DatePicker
+                                      modal
+                                      mode="datetime"
+                                      open={open}
+                                      date={ngaygui}
+                                      onConfirm={ngaygui => {
+                                        setopen(false);
+                                        setngaygui(ngaygui);
+                                      }}
+                                      onCancel={() => {
+                                        setopen(false);
+                                      }}
+                                    />
+                                    <TextInput
+                                      readOnly={true}
+                                      style={{
+                                        height: 30,
+                                        width: '80%',
+                                        backgroundColor: '#ffffff',
+                                      }}
+                                      value={ngaygui
+                                        .toLocaleDateString('vi-VN')
+                                        .toString()}
+                                    />
+
+                                    <Image
+                                      source={require('../../../../../images/calendar.png')}
+                                      style={{
+                                        width: 25,
+                                        height: 25,
+                                        marginTop: 2.5,
+                                        marginLeft: -3,
+                                      }}
+                                    />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                              <View style={{marginTop: 10, marginLeft: -30}}>
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Địa điểm hẹn trả{' '}
+                                  <Text style={{color: 'red'}}>(*)</Text>
+                                </Text>
+
+                                <TextInput
+                                  style={{
+                                    height: 20,
+                                    width: 120,
+                                    fontSize: 18,
+
+                                    borderColor: 'black',
+                                    borderWidth: 0.5,
+                                    padding: 5,
+                                    borderRadius: 5,
+                                    borderTopLeftRadius: 5,
+                                    borderTopRightRadius: 5,
+                                    color: 'black',
+                                    backgroundColor: '#ffffff',
+                                    backgroundColor: '#ffffff',
+                                  }}
+                                  onChangeText={text => setdiadiem(text)}
+                                  value={diadiem}
+                                  multiline={true}
+                                  numberOfLines={4}
+                                  underlineColor="transparent"
+                                />
                               </View>
                             </View>
-                          </View>
-                        ) : TrangThaiSTT ===
-                          tabledata.MC_TTHC_GV_TrangThai_STT_TPD ? (
-                          <View style={[styles.noidungtungbuoc, {height: 650}]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
-
-                            {tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ===
-                            null ? (
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                  width: '90%',
-                                  borderWidth: 1,
-                                  borderRadius: 5,
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                }}>
-                                <View style={{flexDirection: 'row'}}>
-                                  <CheckBox
-                                    value={checkedCBXL}
-                                    onValueChange={() => {
-                                      setCheckedCBXL(!checkedCBXL);
-                                    }}
-                                    tintColors={{
-                                      true: checkboxColor,
-                                      false: checkboxUncheckedColor,
-                                    }}
-                                  />
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        alignItems: 'center',
-                                        marginTop: 7,
-                                        fontSize: 13,
-                                      },
-                                    ]}>
-                                    Cán bộ xử lý
-                                  </Text>
-                                </View>
-                              </View>
-                            ) : (
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                  width: '90%',
-                                  borderWidth: 1,
-                                  borderRadius: 5,
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                }}>
-                                <View style={{flexDirection: 'row'}}>
-                                  <CheckBox
-                                    value={checkedCBXL}
-                                    onValueChange={() => {
-                                      setCheckedCBXL(!checkedCBXL);
-                                    }}
-                                    tintColors={{
-                                      true: checkboxColor,
-                                      false: checkboxUncheckedColor,
-                                    }}
-                                  />
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        alignItems: 'center',
-                                        marginTop: 7,
-                                        fontSize: 13,
-                                      },
-                                    ]}>
-                                    Cán bộ xử lý
-                                  </Text>
-                                </View>
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    marginLeft: 70,
-                                  }}>
-                                  <CheckBox
-                                    value={checkedBGH}
-                                    onValueChange={() => {
-                                      setCheckedBGH(!checkedBGH);
-                                    }}
-                                    tintColors={{
-                                      true: checkboxColor,
-                                      false: checkboxUncheckedColor,
-                                    }}
-                                  />
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        alignItems: 'center',
-                                        marginTop: 7,
-                                        fontSize: 13,
-                                      },
-                                    ]}>
-                                    Ban giám hiệu
-                                  </Text>
-                                </View>
-                              </View>
-                            )}
-
-                            <RadioButton.Group
-                              onValueChange={newValue => setChecked(newValue)}
-                              value={checked}>
-                              {tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ==
-                              null ? (
-                                <View style={{marginLeft: 5}}>
-                                  <View
-                                    style={[styles.radioItem, {marginLeft: 5}]}>
-                                    <RadioButton
-                                      value="0"
-                                      color="black"
-                                      uncheckedColor="black"
-                                    />
-                                    <Text style={styles.modalText}>
-                                      Phê duyệt
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={[styles.radioItem, {marginLeft: 5}]}>
-                                    <RadioButton
-                                      value="1"
-                                      color="black"
-                                      uncheckedColor="black"
-                                    />
-                                    <Text style={styles.modalText}>
-                                      Không phê duyệt
-                                    </Text>
-                                  </View>
-                                </View>
-                              ) : (
-                                <View style={{marginLeft: 5}}>
-                                  <View
-                                    style={[styles.radioItem, {marginLeft: 5}]}>
-                                    <RadioButton
-                                      value="1"
-                                      color="black"
-                                      uncheckedColor="black"
-                                    />
-                                    <Text style={styles.modalText}>
-                                      Không phê duyệt
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={[styles.radioItem, {marginLeft: 5}]}>
-                                    <RadioButton
-                                      value="2"
-                                      color="black"
-                                      uncheckedColor="black"
-                                    />
-                                    <Text style={styles.modalText}>
-                                      Trình duyệt
-                                    </Text>
-                                  </View>
-                                </View>
-                              )}
-                            </RadioButton.Group>
-
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
+                          ) : null}
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:<Text style={{color: 'red'}}>(*)</Text>
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập link tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 60,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
                               }}
-                              placeholder="Nhập links tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
                             <View
                               style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 50,
-                                flexDirection: 'row',
+                                width: '69%',
+                                height: '100%',
                                 justifyContent: 'center',
-                                alignItems: 'center',
                               }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  chooseFile();
-                                }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
-                                }}>
+                              <ScrollView nestedScrollEnabled={true}>
                                 <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
+                                  numberOfLines={10}
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
+                                    },
+                                  ]}>
+                                  {FileName ? FileName : 'Chưa có tệp'}
                                 </Text>
-                              </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
-                              </View>
+                              </ScrollView>
                             </View>
-                            <Text
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter}>
+                            <View
                               style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
                               ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter1}>
-                              <View
-                                style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
-                                ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 24) {
-                                        handleModalPress1();
-                                      } else {
-                                        if (checked === '') {
-                                          handleModalPress6();
+                              <TouchableOpacity
+                                style={styles.touchableOpacity}
+                                onPress={() => {
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '16')) {
+                                      if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+                                        if (diadiem === '') {
+                                          handleModalPress4();
                                         } else {
                                           getTrangThaiHienHanh1(TrangThaiSTT);
                                           ClearData();
                                         }
+                                      } else {
+                                        getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
                                       }
+                                    } else {
+                                      handleModalPress1();
                                     }
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Gửi
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
+                                  }
+                                }}>
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Tiếp nhận
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+
+                            <View style={[styles.buttonHuy, {marginRight: 30}]}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.touchableOpacity,
+                                  {backgroundColor: 'red'},
+                                ]}
+                                onPress={() => {
+                                  if (MangQuyen.some(e => e === '16')) {
+                                    Huytra();
+                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                  } else {
+                                    handleModalPress1();
+                                  }
+                                }}>
+                                <Text style={{color: '#ffffff', fontSize: 19}}>
+                                  Hủy trả
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
-                        ) : TrangThaiSTT ===
-                          tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ? (
-                          <View style={[styles.noidungtungbuoc]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
+                        </View>
+                      ) : TrangThaiSTT ===
+                        tabledata.MC_TTHC_GV_TrangThai_STT_TPD ? (
+                        <View style={[styles.noidungtungbuoc, {height: 650}]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+
+                          {tabledata.MC_TTHC_GV_TrangThai_STT_BGHD === null ? (
                             <View
                               style={{
                                 flexDirection: 'row',
@@ -2651,22 +2261,33 @@ const Chitiethosoxuly = props => {
                                   }}
                                 />
                                 <Text
-                                  style={{
-                                    alignItems: 'center',
-                                    marginTop: 7,
-                                    textAlign: 'center',
-                                    color: 'black',
-                                    fontSize: 13,
-                                  }}>
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
+                                  ]}>
                                   Cán bộ xử lý
                                 </Text>
                               </View>
-                              <View
-                                style={{flexDirection: 'row', marginLeft: 50}}>
+                            </View>
+                          ) : (
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                width: '90%',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                marginLeft: 15,
+                                marginTop: 5,
+                              }}>
+                              <View style={{flexDirection: 'row'}}>
                                 <CheckBox
-                                  value={checkedTPDV}
+                                  value={checkedCBXL}
                                   onValueChange={() => {
-                                    setCheckedTPDV(!checkedTPDV);
+                                    setCheckedCBXL(!checkedCBXL);
                                   }}
                                   tintColors={{
                                     true: checkboxColor,
@@ -2674,24 +2295,54 @@ const Chitiethosoxuly = props => {
                                   }}
                                 />
                                 <Text
-                                  style={{
-                                    alignItems: 'center',
-                                    marginTop: 7,
-                                    textAlign: 'center',
-                                    color: 'black',
-                                    fontSize: 13,
-                                  }}>
-                                  Trưởng/Phó đơn vị
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
+                                  ]}>
+                                  Cán bộ xử lý
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  marginLeft: 70,
+                                }}>
+                                <CheckBox
+                                  value={checkedBGH}
+                                  onValueChange={() => {
+                                    setCheckedBGH(!checkedBGH);
+                                  }}
+                                  tintColors={{
+                                    true: checkboxColor,
+                                    false: checkboxUncheckedColor,
+                                  }}
+                                />
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      alignItems: 'center',
+                                      marginTop: 7,
+                                      fontSize: 13,
+                                    },
+                                  ]}>
+                                  Ban giám hiệu
                                 </Text>
                               </View>
                             </View>
+                          )}
 
-                            <RadioButton.Group
-                              onValueChange={newValue => setChecked1(newValue)}
-                              value={checked1}>
-                              <View style={{flexDirection: 'row'}}>
+                          <RadioButton.Group
+                            onValueChange={newValue => setChecked(newValue)}
+                            value={checked}>
+                            {tabledata.MC_TTHC_GV_TrangThai_STT_BGHD == null ? (
+                              <View style={{marginLeft: 5}}>
                                 <View
-                                  style={[styles.radioItem, {marginLeft: 15}]}>
+                                  style={[styles.radioItem, {marginLeft: 5}]}>
                                   <RadioButton
                                     value="0"
                                     color="black"
@@ -2702,7 +2353,7 @@ const Chitiethosoxuly = props => {
                                   </Text>
                                 </View>
                                 <View
-                                  style={[styles.radioItem, {marginLeft: 50}]}>
+                                  style={[styles.radioItem, {marginLeft: 5}]}>
                                   <RadioButton
                                     value="1"
                                     color="black"
@@ -2713,938 +2364,1259 @@ const Chitiethosoxuly = props => {
                                   </Text>
                                 </View>
                               </View>
-                            </RadioButton.Group>
+                            ) : (
+                              <View style={{marginLeft: 5}}>
+                                <View
+                                  style={[styles.radioItem, {marginLeft: 5}]}>
+                                  <RadioButton
+                                    value="1"
+                                    color="black"
+                                    uncheckedColor="black"
+                                  />
+                                  <Text style={styles.modalText}>
+                                    Không phê duyệt
+                                  </Text>
+                                </View>
+                                <View
+                                  style={[styles.radioItem, {marginLeft: 5}]}>
+                                  <RadioButton
+                                    value="2"
+                                    color="black"
+                                    uncheckedColor="black"
+                                  />
+                                  <Text style={styles.modalText}>
+                                    Trình duyệt
+                                  </Text>
+                                </View>
+                              </View>
+                            )}
+                          </RadioButton.Group>
 
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập links tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 50,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
                               }}
-                              placeholder="Nhập links tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
                             <View
                               style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 50,
-                                flexDirection: 'row',
+                                width: '69%',
+                                height: '100%',
                                 justifyContent: 'center',
-                                alignItems: 'center',
                               }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  chooseFile();
-                                }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
-                                }}>
+                              <ScrollView nestedScrollEnabled={true}>
                                 <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
+                                  numberOfLines={10}
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
+                                    },
+                                  ]}>
+                                  {FileName ? FileName : 'Chưa có tệp'}
                                 </Text>
-                              </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
-                              </View>
+                              </ScrollView>
                             </View>
-                            <Text
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter1}>
+                            <View
                               style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
                               ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter1}>
-                              <View
-                                style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
-                                ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 25) {
-                                        handleModalPress1();
+                              <TouchableOpacity
+                                style={styles.touchableOpacity}
+                                onPress={() => {
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '24')) {
+                                      if (checked === '') {
+                                        handleModalPress6();
                                       } else {
                                         getTrangThaiHienHanh1(TrangThaiSTT);
                                         ClearData();
                                       }
+                                    } else {
+                                      handleModalPress1();
                                     }
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Gửi
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
+                                  }
+                                }}>
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Gửi
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
-                        ) : tabledata.MC_TTHC_GV_TrangThai_STTMAX ===
-                          TrangThaiSTT ? (
-                          <View style={[styles.noidungtungbuoc]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
+                        </View>
+                      ) : TrangThaiSTT ===
+                        tabledata.MC_TTHC_GV_TrangThai_STT_BGHD ? (
+                        <View style={[styles.noidungtungbuoc]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '90%',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              marginLeft: 15,
+                              marginTop: 5,
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <CheckBox
+                                value={checkedCBXL}
+                                onValueChange={() => {
+                                  setCheckedCBXL(!checkedCBXL);
+                                }}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
+                                }}
+                              />
+                              <Text
+                                style={{
+                                  alignItems: 'center',
+                                  marginTop: 7,
+                                  textAlign: 'center',
+                                  color: 'black',
+                                  fontSize: 13,
+                                }}>
+                                Cán bộ xử lý
+                              </Text>
+                            </View>
                             <View
-                              style={{
-                                flexDirection: 'row',
-                                width: '90%',
-                                borderWidth: 1,
-                                borderRadius: 5,
+                              style={{flexDirection: 'row', marginLeft: 50}}>
+                              <CheckBox
+                                value={checkedTPDV}
+                                onValueChange={() => {
+                                  setCheckedTPDV(!checkedTPDV);
+                                }}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
+                                }}
+                              />
+                              <Text
+                                style={{
+                                  alignItems: 'center',
+                                  marginTop: 7,
+                                  textAlign: 'center',
+                                  color: 'black',
+                                  fontSize: 13,
+                                }}>
+                                Trưởng/Phó đơn vị
+                              </Text>
+                            </View>
+                          </View>
+
+                          <RadioButton.Group
+                            onValueChange={newValue => setChecked1(newValue)}
+                            value={checked1}>
+                            <View style={{flexDirection: 'row'}}>
+                              <View
+                                style={[styles.radioItem, {marginLeft: 15}]}>
+                                <RadioButton
+                                  value="0"
+                                  color="black"
+                                  uncheckedColor="black"
+                                />
+                                <Text style={styles.modalText}>Phê duyệt</Text>
+                              </View>
+                              <View
+                                style={[styles.radioItem, {marginLeft: 50}]}>
+                                <RadioButton
+                                  value="1"
+                                  color="black"
+                                  uncheckedColor="black"
+                                />
+                                <Text style={styles.modalText}>
+                                  Không phê duyệt
+                                </Text>
+                              </View>
+                            </View>
+                          </RadioButton.Group>
+
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 15,
                                 marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập links tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 50,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
+                              }}
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
                               }}>
-                              <View style={{flexDirection: 'row'}}>
-                                <CheckBox
-                                  value={checkedNNHS}
-                                  tintColors={{
-                                    true: checkboxColor,
-                                    false: checkboxUncheckedColor,
-                                  }}
-                                />
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
+                            <View
+                              style={{
+                                width: '69%',
+                                height: '100%',
+                                justifyContent: 'center',
+                              }}>
+                              <ScrollView nestedScrollEnabled={true}>
                                 <Text
+                                  numberOfLines={10}
                                   style={[
                                     styles.TextNormal,
                                     {
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      fontSize: 13,
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
                                     },
                                   ]}>
-                                  Người nộp hồ sơ
+                                  {FileName ? FileName : 'Chưa có tệp'}
                                 </Text>
-                              </View>
+                              </ScrollView>
                             </View>
-                            {tabledata.MC_TTHC_GV_IDMucDo === 2 ||
-                            tabledata.MC_TTHC_GV_IDMucDo === 3 ? (
-                              <View style={{flexDirection: 'row'}}>
-                                <View style={{marginTop: 10, marginLeft: 15}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Ngày giờ hẹn trả
-                                  </Text>
-                                  <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity
-                                      onPress={handlePress}
-                                      style={{
-                                        flexDirection: 'row',
-                                        borderWidth: 1,
-                                        width: '65%',
-                                        borderRadius: 5,
-                                      }}>
-                                      <DatePicker
-                                        modal
-                                        mode="datetime"
-                                        open={open}
-                                        date={ngaygui}
-                                        onConfirm={ngaygui => {
-                                          setopen(false);
-                                          setngaygui(ngaygui);
-                                        }}
-                                        onCancel={() => {
-                                          setopen(false);
-                                        }}
-                                      />
-                                      <TextInput
-                                        readOnly={true}
-                                        style={{
-                                          height: 30,
-                                          width: '80%',
-                                          backgroundColor: '#ffffff',
-                                        }}
-                                        value={ngaygui
-                                          .toLocaleDateString('vi-VN')
-                                          .toString()}
-                                      />
-
-                                      <Image
-                                        source={require('../../../../../images/calendar.png')}
-                                        style={{
-                                          width: 25,
-                                          height: 25,
-                                          marginTop: 2.5,
-                                          marginLeft: -3,
-                                        }}
-                                      />
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                                <View style={{marginTop: 10, marginLeft: -30}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Địa điểm hẹn trả
-                                    <Text style={{color: 'red'}}>(*)</Text>
-                                  </Text>
-                                  <TextInput
-                                    style={{
-                                      height: 20,
-                                      width: 120,
-                                      fontSize: 18,
-
-                                      borderColor: 'black',
-                                      borderWidth: 0.5,
-                                      padding: 5,
-                                      borderRadius: 5,
-                                      borderTopLeftRadius: 5,
-                                      borderTopRightRadius: 5,
-                                      color: 'black',
-                                      backgroundColor: '#ffffff',
-                                      backgroundColor: '#ffffff',
-                                    }}
-                                    onChangeText={text => setdiadiem(text)}
-                                    value={diadiem}
-                                    multiline={true}
-                                    numberOfLines={4}
-                                    underlineColor="transparent"
-                                  />
-                                </View>
-                              </View>
-                            ) : null}
-
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:<Text style={{color: 'red'}}>(*)</Text>
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
-                                marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
-                              }}
-                              placeholder="Nhập links tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter1}>
                             <View
-                              style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 50,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
+                              style={[
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
+                              ]}>
                               <TouchableOpacity
+                                style={styles.touchableOpacity}
                                 onPress={() => {
-                                  chooseFile();
-                                }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '25')) {
+                                      getTrangThaiHienHanh1(TrangThaiSTT);
+                                      ClearData();
+                                    } else {
+                                      handleModalPress1();
+                                    }
+                                  }
                                 }}>
-                                <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Gửi
                                 </Text>
                               </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
+                            </View>
+                          </View>
+                        </View>
+                      ) : tabledata.MC_TTHC_GV_TrangThai_STTMAX ===
+                        TrangThaiSTT ? (
+                        <View style={[styles.noidungtungbuoc]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '90%',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              marginLeft: 15,
+                              marginTop: 5,
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <CheckBox
+                                value={checkedNNHS}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
+                                }}
+                              />
+                              <Text
+                                style={[
+                                  styles.TextNormal,
+                                  {
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    fontSize: 13,
+                                  },
+                                ]}>
+                                Người nộp hồ sơ
+                              </Text>
+                            </View>
+                          </View>
+                          {tabledata.MC_TTHC_GV_IDMucDo === 2 ||
+                          tabledata.MC_TTHC_GV_IDMucDo === 3 ? (
+                            <View style={{flexDirection: 'row'}}>
+                              <View style={{marginTop: 10, marginLeft: 15}}>
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Ngày giờ hẹn trả
+                                </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                  <TouchableOpacity
+                                    onPress={handlePress}
+                                    style={{
+                                      flexDirection: 'row',
+                                      borderWidth: 1,
+                                      width: '65%',
+                                      borderRadius: 5,
+                                    }}>
+                                    <DatePicker
+                                      modal
+                                      mode="datetime"
+                                      open={open}
+                                      date={ngaygui}
+                                      onConfirm={ngaygui => {
+                                        setopen(false);
+                                        setngaygui(ngaygui);
+                                      }}
+                                      onCancel={() => {
+                                        setopen(false);
+                                      }}
+                                    />
+                                    <TextInput
+                                      readOnly={true}
+                                      style={{
+                                        height: 30,
+                                        width: '80%',
+                                        backgroundColor: '#ffffff',
+                                      }}
+                                      value={ngaygui
+                                        .toLocaleDateString('vi-VN')
+                                        .toString()}
+                                    />
+
+                                    <Image
+                                      source={require('../../../../../images/calendar.png')}
+                                      style={{
+                                        width: 25,
+                                        height: 25,
+                                        marginTop: 2.5,
+                                        marginLeft: -3,
+                                      }}
+                                    />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                              <View style={{marginTop: 10, marginLeft: -30}}>
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Địa điểm hẹn trả
+                                  <Text style={{color: 'red'}}>(*)</Text>
+                                </Text>
+                                <TextInput
+                                  style={{
+                                    height: 20,
+                                    width: 120,
+                                    fontSize: 18,
+
+                                    borderColor: 'black',
+                                    borderWidth: 0.5,
+                                    padding: 5,
+                                    borderRadius: 5,
+                                    borderTopLeftRadius: 5,
+                                    borderTopRightRadius: 5,
+                                    color: 'black',
+                                    backgroundColor: '#ffffff',
+                                    backgroundColor: '#ffffff',
+                                  }}
+                                  onChangeText={text => setdiadiem(text)}
+                                  value={diadiem}
+                                  multiline={true}
+                                  numberOfLines={4}
+                                  underlineColor="transparent"
+                                />
                               </View>
                             </View>
-                            <Text
+                          ) : null}
+
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:<Text style={{color: 'red'}}>(*)</Text>
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập links tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 50,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
+                              }}
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
+                            <View
+                              style={{
+                                width: '69%',
+                                height: '100%',
+                                justifyContent: 'center',
+                              }}>
+                              <ScrollView nestedScrollEnabled={true}>
+                                <Text
+                                  numberOfLines={10}
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
+                                    },
+                                  ]}>
+                                  {FileName ? FileName : 'Chưa có tệp'}
+                                </Text>
+                              </ScrollView>
+                            </View>
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter}>
+                            <View
                               style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
                               ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter}>
-                              <View
-                                style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
-                                ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 16) {
-                                        handleModalPress1();
-                                      } else {
-                                        if (
-                                          tabledata.MC_TTHC_GV_IDMucDo === 2
-                                        ) {
-                                          if (diadiem === '') {
-                                            handleModalPress4();
-                                          } else {
-                                            getTrangThaiHienHanh1(TrangThaiSTT);
-                                            ClearData();
-                                          }
+                              <TouchableOpacity
+                                style={styles.touchableOpacity}
+                                onPress={() => {
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '16')) {
+                                      if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+                                        if (diadiem === '') {
+                                          handleModalPress4();
                                         } else {
                                           getTrangThaiHienHanh1(TrangThaiSTT);
                                           ClearData();
                                         }
-
-                                        // console.log("email cbxl: ",emailcbxl);
+                                      } else {
+                                        getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
                                       }
-                                    }
-
-                                    console.log(
-                                      ngaygui
-                                        .toLocaleDateString('vi-vn')
-                                        .toString(),
-                                    );
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Tiếp nhận
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-
-                              <View
-                                style={[styles.buttonHuy, {marginRight: 30}]}>
-                                <TouchableOpacity
-                                  style={[
-                                    styles.touchableOpacity,
-                                    {backgroundColor: 'red'},
-                                  ]}
-                                  onPress={() => {
-                                    if (MangQuyen != 16) {
-                                      handleModalPress1();
                                     } else {
-                                      Huytra();
-                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                      handleModalPress1();
+                                      // console.log("email cbxl: ",emailcbxl);
                                     }
-                                  }}>
-                                  <Text
-                                    style={{color: '#ffffff', fontSize: 19}}>
-                                    Hủy trả
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
+                                  }
+
+                                  console.log(
+                                    ngaygui
+                                      .toLocaleDateString('vi-vn')
+                                      .toString(),
+                                  );
+                                }}>
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Tiếp nhận
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+
+                            <View style={[styles.buttonHuy, {marginRight: 30}]}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.touchableOpacity,
+                                  {backgroundColor: 'red'},
+                                ]}
+                                onPress={() => {
+                                  if (MangQuyen.some(e => e === '16')) {
+                                    Huytra();
+                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                  } else {
+                                    handleModalPress1();
+                                  }
+                                }}>
+                                <Text style={{color: '#ffffff', fontSize: 19}}>
+                                  Hủy trả
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
-                        ) : tabledata.MC_TTHC_GV_TrangThai_STTMAX - 1 ===
-                          TrangThaiSTT ? (
-                          <View style={[styles.noidungtungbuoc]}>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {marginTop: 5, textAlign: 'center'},
-                              ]}>
-                              THÔNG BÁO
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {marginLeft: 15, textAlign: 'left'},
-                              ]}>
-                              Gửi email:
-                            </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                width: '90%',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                marginLeft: 15,
-                                marginTop: 5,
-                              }}>
-                              <View style={{flexDirection: 'row'}}>
-                                <CheckBox
-                                  value={checkedNNHS}
-                                  tintColors={{
-                                    true: checkboxColor,
-                                    false: checkboxUncheckedColor,
-                                  }}
-                                />
+                        </View>
+                      ) : tabledata.MC_TTHC_GV_TrangThai_STTMAX - 1 ===
+                        TrangThaiSTT ? (
+                        <View style={[styles.noidungtungbuoc]}>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {marginTop: 5, textAlign: 'center'},
+                            ]}>
+                            THÔNG BÁO
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {marginLeft: 15, textAlign: 'left'},
+                            ]}>
+                            Gửi email:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '90%',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              marginLeft: 15,
+                              marginTop: 5,
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <CheckBox
+                                value={checkedNNHS}
+                                tintColors={{
+                                  true: checkboxColor,
+                                  false: checkboxUncheckedColor,
+                                }}
+                              />
+                              <Text
+                                style={[
+                                  styles.TextNormal,
+                                  {
+                                    alignItems: 'center',
+                                    marginTop: 7,
+                                    fontSize: 13,
+                                  },
+                                ]}>
+                                Người nộp hồ sơ
+                              </Text>
+                            </View>
+                          </View>
+                          {tabledata.MC_TTHC_GV_IDMucDo === 2 ||
+                          tabledata.MC_TTHC_GV_IDMucDo === 3 ? (
+                            <View style={{flexDirection: 'row'}}>
+                              <View style={{marginTop: 10, marginLeft: 15}}>
                                 <Text
                                   style={[
                                     styles.TextNormal,
-                                    {
-                                      alignItems: 'center',
-                                      marginTop: 7,
-                                      fontSize: 13,
-                                    },
+                                    {textAlign: 'left'},
                                   ]}>
-                                  Người nộp hồ sơ
+                                  Ngày giờ hẹn trả
                                 </Text>
+                                <View style={{flexDirection: 'row'}}>
+                                  <TouchableOpacity
+                                    onPress={handlePress}
+                                    style={{
+                                      flexDirection: 'row',
+                                      borderWidth: 1,
+                                      width: '65%',
+                                      borderRadius: 5,
+                                    }}>
+                                    <DatePicker
+                                      modal
+                                      mode="datetime"
+                                      open={open}
+                                      date={ngaygui}
+                                      onConfirm={ngaygui => {
+                                        setopen(false);
+                                        setngaygui(ngaygui);
+                                      }}
+                                      onCancel={() => {
+                                        setopen(false);
+                                      }}
+                                    />
+                                    <TextInput
+                                      readOnly={true}
+                                      style={{
+                                        height: 30,
+                                        width: '80%',
+                                        backgroundColor: '#ffffff',
+                                      }}
+                                      value={ngaygui
+                                        .toLocaleDateString('vi-VN')
+                                        .toString()}
+                                    />
+
+                                    <Image
+                                      source={require('../../../../../images/calendar.png')}
+                                      style={{
+                                        width: 25,
+                                        height: 25,
+                                        marginTop: 2.5,
+                                        marginLeft: -3,
+                                      }}
+                                    />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                              <View style={{marginTop: 10, marginLeft: -30}}>
+                                <Text
+                                  style={[
+                                    styles.TextNormal,
+                                    {textAlign: 'left'},
+                                  ]}>
+                                  Địa điểm hẹn trả
+                                  <Text style={{color: 'red'}}>(*)</Text>
+                                </Text>
+                                <TextInput
+                                  style={{
+                                    height: 20,
+                                    width: 120,
+                                    fontSize: 18,
+
+                                    borderColor: 'black',
+                                    borderWidth: 0.5,
+                                    padding: 5,
+                                    borderRadius: 5,
+                                    borderTopLeftRadius: 5,
+                                    borderTopRightRadius: 5,
+                                    color: 'black',
+                                    backgroundColor: '#ffffff',
+                                    backgroundColor: '#ffffff',
+                                  }}
+                                  onChangeText={text => setdiadiem(text)}
+                                  value={diadiem}
+                                  multiline={true}
+                                  numberOfLines={4}
+                                  underlineColor="transparent"
+                                />
                               </View>
                             </View>
-                            {tabledata.MC_TTHC_GV_IDMucDo === 2 ||
-                            tabledata.MC_TTHC_GV_IDMucDo === 3 ? (
-                              <View style={{flexDirection: 'row'}}>
-                                <View style={{marginTop: 10, marginLeft: 15}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Ngày giờ hẹn trả
-                                  </Text>
-                                  <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity
-                                      onPress={handlePress}
-                                      style={{
-                                        flexDirection: 'row',
-                                        borderWidth: 1,
-                                        width: '65%',
-                                        borderRadius: 5,
-                                      }}>
-                                      <DatePicker
-                                        modal
-                                        mode="datetime"
-                                        open={open}
-                                        date={ngaygui}
-                                        onConfirm={ngaygui => {
-                                          setopen(false);
-                                          setngaygui(ngaygui);
-                                        }}
-                                        onCancel={() => {
-                                          setopen(false);
-                                        }}
-                                      />
-                                      <TextInput
-                                        readOnly={true}
-                                        style={{
-                                          height: 30,
-                                          width: '80%',
-                                          backgroundColor: '#ffffff',
-                                        }}
-                                        value={ngaygui
-                                          .toLocaleDateString('vi-VN')
-                                          .toString()}
-                                      />
+                          ) : null}
 
-                                      <Image
-                                        source={require('../../../../../images/calendar.png')}
-                                        style={{
-                                          width: 25,
-                                          height: 25,
-                                          marginTop: 2.5,
-                                          marginLeft: -3,
-                                        }}
-                                      />
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                                <View style={{marginTop: 10, marginLeft: -30}}>
-                                  <Text
-                                    style={[
-                                      styles.TextNormal,
-                                      {textAlign: 'left'},
-                                    ]}>
-                                    Địa điểm hẹn trả
-                                    <Text style={{color: 'red'}}>(*)</Text>
-                                  </Text>
-                                  <TextInput
-                                    style={{
-                                      height: 20,
-                                      width: 120,
-                                      fontSize: 18,
-
-                                      borderColor: 'black',
-                                      borderWidth: 0.5,
-                                      padding: 5,
-                                      borderRadius: 5,
-                                      borderTopLeftRadius: 5,
-                                      borderTopRightRadius: 5,
-                                      color: 'black',
-                                      backgroundColor: '#ffffff',
-                                      backgroundColor: '#ffffff',
-                                    }}
-                                    onChangeText={text => setdiadiem(text)}
-                                    value={diadiem}
-                                    multiline={true}
-                                    numberOfLines={4}
-                                    underlineColor="transparent"
-                                  />
-                                </View>
-                              </View>
-                            ) : null}
-
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Nội dung:<Text style={{color: 'red'}}>(*)</Text>
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '91%',
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 15,
-                                backgroundColor: '#ffffff',
-                                marginRight: 15,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 70,
-                              }}
-                              value={noidung}
-                              onChangeText={text => setnoidung(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 15,
-                                  marginTop: 5,
-                                },
-                              ]}>
-                              Tài liệu kèm theo:
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Links tệp đính kèm:
-                            </Text>
-                            <TextInput
-                              style={{
-                                width: '87%',
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Nội dung:<Text style={{color: 'red'}}>(*)</Text>
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '91%',
+                              marginLeft: 15,
+                              backgroundColor: '#ffffff',
+                              marginRight: 15,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 70,
+                            }}
+                            value={noidung}
+                            onChangeText={text => setnoidung(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 15,
+                                marginTop: 5,
+                              },
+                            ]}>
+                            Tài liệu kèm theo:
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
                                 marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Links tệp đính kèm:
+                          </Text>
+                          <TextInput
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 30,
+                            }}
+                            placeholder="Nhập links tệp đính kèm"
+                            value={link}
+                            onChangeText={text => setlink(text)}
+                          />
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Hoặc
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm:
+                          </Text>
+                          <View
+                            style={{
+                              width: '87%',
+                              marginLeft: 30,
+                              backgroundColor: '#ffffff',
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              height: 50,
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                chooseFile();
                               }}
-                              placeholder="Nhập links tệp đính kèm"
-                              value={link}
-                              onChangeText={text => setlink(text)}
-                            />
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Hoặc
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              Tệp đính kèm:
-                            </Text>
+                              style={{
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                width: '30%',
+                                backgroundColor: '#C0C0C0',
+                                marginLeft: 2,
+                                height: 30,
+                                marginTop: 2,
+                                marginBottom: 2,
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 16,
+                                  textAlign: 'center',
+                                }}>
+                                Chọn tệp
+                              </Text>
+                            </TouchableOpacity>
                             <View
                               style={{
-                                width: '87%',
-                                marginLeft: 30,
-                                backgroundColor: '#ffffff',
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                height: 50,
-                                flexDirection: 'row',
+                                width: '69%',
+                                height: '100%',
                                 justifyContent: 'center',
-                                alignItems: 'center',
                               }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  chooseFile();
-                                }}
-                                style={{
-                                  borderRadius: 5,
-                                  borderWidth: 1,
-                                  width: '30%',
-                                  backgroundColor: '#C0C0C0',
-                                  marginLeft: 2,
-                                  height: 30,
-                                  marginTop: 2,
-                                  marginBottom: 2,
-                                  justifyContent: 'center',
-                                }}>
+                              <ScrollView nestedScrollEnabled={true}>
                                 <Text
-                                  style={{
-                                    color: 'black',
-                                    fontSize: 16,
-                                    textAlign: 'center',
-                                  }}>
-                                  Chọn tệp
+                                  numberOfLines={10}
+                                  style={[
+                                    styles.TextNormal,
+                                    {
+                                      marginLeft: 3,
+                                      textAlign: 'left',
+                                      width: '90%',
+                                      marginTop: 16,
+                                    },
+                                  ]}>
+                                  {FileName ? FileName : 'Chưa có tệp'}
                                 </Text>
-                              </TouchableOpacity>
-                              <View
-                                style={{
-                                  width: '69%',
-                                  height: '100%',
-                                  justifyContent: 'center',
-                                }}>
-                                <ScrollView nestedScrollEnabled={true}>
-                                  <Text
-                                    numberOfLines={10}
-                                    style={[
-                                      styles.TextNormal,
-                                      {
-                                        marginLeft: 3,
-                                        textAlign: 'left',
-                                        width: '90%',
-                                        marginTop: 16,
-                                      },
-                                    ]}>
-                                    {FileName ? FileName : 'Chưa có tệp'}
-                                  </Text>
-                                </ScrollView>
-                              </View>
+                              </ScrollView>
                             </View>
-                            <Text
+                          </View>
+                          <Text
+                            style={[
+                              styles.TextNormal,
+                              {
+                                textAlign: 'left',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            Tệp đính kèm phải có dạng PDF
+                          </Text>
+                          <Text
+                            style={[
+                              styles.TextBold,
+                              {
+                                textAlign: 'left',
+                                color: 'red',
+                                marginLeft: 30,
+                                marginTop: 1,
+                              },
+                            ]}>
+                            (Kích thước tối đa 5 MB)
+                          </Text>
+                          <View style={styles.viewFooter}>
+                            <View
                               style={[
-                                styles.TextNormal,
-                                {
-                                  textAlign: 'left',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
+                                styles.buttonHuy,
+                                {marginLeft: 30, backgroundColor: '#245d7c'},
                               ]}>
-                              Tệp đính kèm phải có dạng PDF
-                            </Text>
-                            <Text
-                              style={[
-                                styles.TextBold,
-                                {
-                                  textAlign: 'left',
-                                  color: 'red',
-                                  marginLeft: 30,
-                                  marginTop: 1,
-                                },
-                              ]}>
-                              (Kích thước tối đa 5 MB)
-                            </Text>
-                            <View style={styles.viewFooter}>
-                              <View
-                                style={[
-                                  styles.buttonHuy,
-                                  {marginLeft: 30, backgroundColor: '#245d7c'},
-                                ]}>
-                                <TouchableOpacity
-                                  style={styles.touchableOpacity}
-                                  onPress={() => {
-                                    if (noidung === '') {
-                                      handleModalPress();
-                                    } else {
-                                      if (MangQuyen != 16) {
-                                        handleModalPress1();
-                                      } else {
-                                        if (
-                                          tabledata.MC_TTHC_GV_IDMucDo === 2
-                                        ) {
-                                          if (diadiem === '') {
-                                            handleModalPress4();
-                                          } else {
-                                            getTrangThaiHienHanh1(TrangThaiSTT);
-                                            ClearData();
-                                          }
+                              <TouchableOpacity
+                                style={styles.touchableOpacity}
+                                onPress={() => {
+                                  if (noidung === '') {
+                                    handleModalPress();
+                                  } else {
+                                    if (MangQuyen.some(e => e === '16')) {
+                                      if (tabledata.MC_TTHC_GV_IDMucDo === 2) {
+                                        if (diadiem === '') {
+                                          handleModalPress4();
                                         } else {
                                           getTrangThaiHienHanh1(TrangThaiSTT);
                                           ClearData();
                                         }
+                                      } else {
+                                        getTrangThaiHienHanh1(TrangThaiSTT);
+                                        ClearData();
                                       }
-                                    }
-                                  }}>
-                                  <Text style={{color: 'white', fontSize: 18}}>
-                                    Tiếp nhận
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-
-                              <View
-                                style={[styles.buttonHuy, {marginRight: 30}]}>
-                                <TouchableOpacity
-                                  style={[
-                                    styles.touchableOpacity,
-                                    {backgroundColor: 'red'},
-                                  ]}
-                                  onPress={() => {
-                                    if (MangQuyen[0] != 16) {
-                                      handleModalPress1();
                                     } else {
-                                      Huytra();
-                                      sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                      handleModalPress1();
                                     }
-                                  }}>
-                                  <Text
-                                    style={{color: '#ffffff', fontSize: 19}}>
-                                    Hủy trả
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
+                                  }
+                                }}>
+                                <Text style={{color: 'white', fontSize: 18}}>
+                                  Tiếp nhận
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+
+                            <View style={[styles.buttonHuy, {marginRight: 30}]}>
+                              <TouchableOpacity
+                                style={[
+                                  styles.touchableOpacity,
+                                  {backgroundColor: 'red'},
+                                ]}
+                                onPress={() => {
+                                  if (MangQuyen.some(e => e === '16')) {
+                                    Huytra();
+                                    sendEmail(TEMPLATE_EMAIL_SUBJECT.CANCEL);
+                                  } else {
+                                    handleModalPress1();
+                                  }
+                                }}>
+                                <Text style={{color: '#ffffff', fontSize: 19}}>
+                                  Hủy trả
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
-                        ) : null}
-                      </View>
-                    ) : null
-                  ) : null}
-                </View>
-              ))
-            : null
-          : null}
+                        </View>
+                      ) : null}
+                    </View>
+                  ) : null
+                ) : null}
+              </View>
+            ))
+          )
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              flex: 1,
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator />
+          </View>
+        )}
 
         <View style={styles.tieudelon}>
           <TouchableOpacity

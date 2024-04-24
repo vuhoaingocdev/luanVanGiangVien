@@ -81,8 +81,6 @@ const CBXL_DanhSachThuTuc = props => {
   //Lấy dữ liệu từ api in ra danh sách thủ tục
   const [dataThuTuc, setDataThuTuc] = useState([]);
 
-  const apiGetDuLieuDanhSachThuTuc =
-    'https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/TimKiemThuTuc?MC_TTHC_GV_DieuKienLoc=&TuKhoaTimKiem=&PhongBan';
   const getMangDanhSachThuTuc = async () => {
     const callApi = async () => {
       const response = await axios.get(apiGetDuLieuDanhSachThuTuc, {
@@ -139,7 +137,6 @@ const CBXL_DanhSachThuTuc = props => {
   //Danh sách hồ sơ đề nghị bên Cán bộ xử lí
   const [danhSachHoSoGuiLen, setDanhSachHoSoGuiLen] = useState([]);
   const [danhSachHoSoGuiLenGoc, setDanhSachHoSoGuiLenGoc] = useState([]);
-  const apiGetDSHSGL = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_DuLieu_ByMaNhanSu?DieuKienLoc=0&MaNhanSu=${maGiangVien}`;
   const getMangDanhSachHoSoGuiLen = async () => {
     const callApi1 = async () => {
       const response = await axios.get(apiGetDSHSGL, {
@@ -183,7 +180,6 @@ const CBXL_DanhSachThuTuc = props => {
 
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
-  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
   const getSoLuong = async () => {
     const apiCall = async () => {
       const response = await axios.get(apiSoLuongThuGuiLen, {
@@ -218,6 +214,7 @@ const CBXL_DanhSachThuTuc = props => {
     }
   };
 
+  //
   const [dieuKien, setDieuKien] = useState('');
   const danhSachHienThi = useMemo(() => {
     if (dieuKien === '') {
@@ -921,19 +918,6 @@ const CBXL_DanhSachThuTuc = props => {
                   <View style={{flexDirection: 'row', width: 180}}>
                     <Text
                       style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
-                      + Ngày hẹn trả:
-                    </Text>
-                    <Text style={[styles.textDuLieuThongTinHoSo]}>
-                      {' '}
-                      {thongTinHoSoModal.NgayHenTra
-                        ? formatDate(thongTinHoSoModal.NgayHenTra)
-                        : ''}
-                    </Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row', width: 180}}>
-                    <Text
-                      style={[styles.textDuLieuThongTinHoSo, {marginLeft: 10}]}>
                       + Đơn vị/ Cá nhân gửi:
                     </Text>
                     <Text style={[styles.textDuLieuThongTinHoSo]}>
@@ -963,7 +947,11 @@ const CBXL_DanhSachThuTuc = props => {
                     </Text>
                     <Text style={[styles.textDuLieuThongTinHoSo]}>
                       {' '}
-                      {thongTinHoSoModal.TrangThai}
+                      {thongTinHoSoModal.TrangThaiID == 0
+                        ? 'Chưa tiếp nhận'
+                        : thongTinHoSoModal.TrangThaiID == -1
+                        ? 'Hủy trả hồ sơ'
+                        : thongTinHoSoModal.TrangThai}
                     </Text>
                   </View>
 

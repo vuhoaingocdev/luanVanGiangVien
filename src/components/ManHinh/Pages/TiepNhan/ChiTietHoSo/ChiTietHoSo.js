@@ -89,7 +89,6 @@ const ChiTietHoSo = props => {
     }
   };
 
-  const apiGetThongTinHoSo = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_R_Para_File`;
   const getThongTinHoSo = async idGuiYC => {
     const callApi = async idGuiYC => {
       const response = await axios.get(apiGetThongTinHoSo, {
@@ -126,7 +125,6 @@ const ChiTietHoSo = props => {
     }
   };
 
-  const apiGetQuaTrinhXuLy = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_TrangThai_TheoDoi_DeNghi_Load_Para`;
   const getQuaTrinhXuLy = async idGuiYC => {
     const callApi1 = async idGuiYC => {
       const response = await axios.get(apiGetQuaTrinhXuLy, {
@@ -160,7 +158,6 @@ const ChiTietHoSo = props => {
     }
   };
 
-  const apiGetChiTietTiepNhanHoSo = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_NguoiDung_TheoDoi_QuyTrinhXuLy_Load_Para`;
   const getChiTietTiepNhanHoSo = async (idGuiYC, getTrangThai1) => {
     const callApi2 = async (idGuiYC, getTrangThai1) => {
       const response = await axios.get(apiGetChiTietTiepNhanHoSo, {
@@ -202,7 +199,6 @@ const ChiTietHoSo = props => {
   //Số lượng hồ sơ gửi lên
   //Lấy số lượng thủ tục gửi lên
   const [soLuongThuGuiLen, setSoLuongThuTucGuiLen] = useState(0);
-  const apiSoLuongThuGuiLen = `https://apiv2.uneti.edu.vn/api/SP_MC_TTHC_GV_TiepNhan/GuiYeuCau_Load_ByMaNhanSu?MC_TTHC_GV_GuiYeuCau_MaNhanSu=${maGiangVien}`;
   const getSoLuong = async () => {
     const apiCall = async () => {
       const response = await axios.get(apiSoLuongThuGuiLen, {
